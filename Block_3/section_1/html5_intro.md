@@ -1,20 +1,220 @@
 ## Babyon introduction
 
-The documentation for babylonjs is at [https://doc.babylonjs.com/journey](https://doc.babylonjs.com/journey).  This describes the first step.
+### Documentation
 
-The first piece of advice is then to open  second web page pointing at the babylon.js playground at [https://playground.babylonjs.com/](https://playground.babylonjs.com/).
+The documentation for babylonjs is at [https://doc.babylonjs.com/journey](https://doc.babylonjs.com/journey).  This first link [https://doc.babylonjs.com/journey/theFirstStep](https://doc.babylonjs.com/journey/theFirstStep) describes the first step.
+
+### Playground
+The first piece of advice given is then to open up an example playground page in a seperate tab page pointing at the babylon.js playground at [https://playground.babylonjs.com/](https://playground.babylonjs.com/).  This presents a basic scene with a grond and a sphere.  The code shown here is javascript.
+
+![playground javascript](playgroundjs.png)
+
+### Language choice
+
+If you click on the red TS icon you will be invited to change language.
+
+![go to TS](gotots.png)
+
+Take ok and see the Typescript version of the code.
+
+![playground typescript](playgroundts.png)
+
+You will see that the code is not so different.  [Typescript](https://www.typescriptlang.org/) is a superset of JavaScript which adds features which help you to write code with fewer errors.
+
+When typescript is run it transcompiles into javascript.  This happens behind the scenes providing you are operating in a node environment and have all the supporting modules loaded.  
+
+At the moment the focus is on creating scenes using code.  In the future, once the code is understood, a babylon editor can speed up the process.  This editor produces typescript and that is why typescript is preferred for learning babylon code rather than javascript.  However, until the typescript environment has been set up the first demo pages can be generated using javaScript.
+
+
+So click on the blue JS icon in the playground to return to javascript.
+
+### Detailed Scene
 
 The playground is a place where code snippets can be developed.  Each snippet created will have a unique identifier.  Appending this to the URL will allow you to access the saved snippet.  An example of a snippet which demonstrates the rendering capability of babylon js can be found at [https://playground.babylonjs.com/#P1RZV0](https://playground.babylonjs.com/#P1RZV0).  The code is displayed alongside the scene.  Possibly Hamburg station.  You can drag on the image in the playground to look around the 3D scene and notice refraction in the bottle and a partial transparent shadow.
 
 ![station](station.png)
 
-## Default Scene
+### Playground Scene
 
 The default image on the playground site is a sphere floating above a ground plane.  The code displayed with this shows the createScene function.
 
 ![default scene](default.png)
 
-The createScene function is the interesting thing here, but it is not the complete code.  Playground adds in extra code behind the scenes.  
+The createScene function is the interesting thing here, it contains a camera, a light, a sphere and the ground.
+
+``` javascript
+var createScene = function () {
+    // This creates a basic Babylon Scene object (non-mesh)
+    var scene = new BABYLON.Scene(engine);
+
+    // This creates and positions a free camera (non-mesh)
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+
+    // This targets the camera to scene origin
+    camera.setTarget(BABYLON.Vector3.Zero());
+
+    // This attaches the camera to the canvas
+    camera.attachControl(canvas, true);
+
+    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+    // Default intensity is 1. Let's dim the light a small amount
+    light.intensity = 0.7;
+
+    // Our built-in 'sphere' shape.
+    var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
+
+    // Move the sphere upward 1/2 its height
+    sphere.position.y = 1;
+
+    // Our built-in 'ground' shape.
+    var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+    
+
+    return scene;
+};
+```
+The documentation takes you through editing the code in playground to show a Yeti on a chequerboard. Give that a try!
+
+However what you are working with in playground is a function which returns a scene.  Where is the function called?  This is useful, but it is not the complete code.  Playground adds in extra code behind the scenes.  This is the fairly repetetive code needed to render the scene.
+
+Code can be downloaded as a zip file from playground.  On unzipping a file index,html can be inspected which contains the full code needed to display the demo.
+
+This includes a collection of script links to load in the required BabylonJS framework code, a stylesheet section to control the size of a canvas, script to manage a render loop, the createScene() function (as presented on the playground) and the initialisation of an engine.
+
+![download](download.png)
+
+``` html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+        <script src="https://assets.babylonjs.com/generated/Assets.js"></script>
+        <script src="https://cdn.babylonjs.com/recast.js"></script>
+        <script src="https://cdn.babylonjs.com/ammo.js"></script>
+        <script src="https://cdn.babylonjs.com/havok/HavokPhysics_umd.js"></script>
+        <script src="https://cdn.babylonjs.com/cannon.js"></script>
+        <script src="https://cdn.babylonjs.com/Oimo.js"></script>
+        <script src="https://cdn.babylonjs.com/earcut.min.js"></script>
+        <script src="https://cdn.babylonjs.com/babylon.js"></script>
+        <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://cdn.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+        <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+            
+            #canvasZone {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+<body>
+    <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var startRenderLoop = function (engine, canvas) {
+            engine.runRenderLoop(function () {
+                if (sceneToRender && sceneToRender.activeCamera) {
+                    sceneToRender.render();
+                }
+            });
+        }
+
+        var engine = null;
+        var scene = null;
+        var sceneToRender = null;
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+        var createScene = function () {
+    // This creates a basic Babylon Scene object (non-mesh)
+    var scene = new BABYLON.Scene(engine);
+
+    // This creates and positions a free camera (non-mesh)
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+
+    // This targets the camera to scene origin
+    camera.setTarget(BABYLON.Vector3.Zero());
+
+    // This attaches the camera to the canvas
+    camera.attachControl(canvas, true);
+
+    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+    // Default intensity is 1. Let's dim the light a small amount
+    light.intensity = 0.7;
+
+    // Our built-in 'ground' shape.
+    var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+    let groundMaterial = new BABYLON.StandardMaterial("Ground Material", scene);
+    ground.material = groundMaterial;
+    let groundTexture = new BABYLON.Texture(Assets.textures.checkerboard_basecolor_png.rootUrl, scene);
+    ground.material.diffuseTexture = groundTexture;
+
+    BABYLON.SceneLoader.ImportMesh("", Assets.meshes.Yeti.rootUrl, Assets.meshes.Yeti.filename, scene, function(newMeshes){
+        newMeshes[0].scaling = new BABYLON.Vector3(0.1, 0.1, 0.1);
+    });
+
+    return scene;
+};
+                window.initFunction = async function() {
+                    
+                    
+                    
+                    var asyncEngineCreation = async function() {
+                        try {
+                        return createDefaultEngine();
+                        } catch(e) {
+                        console.log("the available createEngine function failed. Creating the default engine instead");
+                        return createDefaultEngine();
+                        }
+                    }
+
+                    window.engine = await asyncEngineCreation();
+        if (!engine) throw 'engine should not be null.';
+        startRenderLoop(engine, canvas);
+        window.scene = createScene();};
+        initFunction().then(() => {sceneToRender = scene                    
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
+
+```
+Download and unzip this file and click on it in the file inspector to check that it runs.
+
+## Developing locally
+
+To work on babylonJS locally, in javaScript for starters, all this code will be needed.  It is useful to separate the repetetive code and the specific scene code into separate files.  Later a pattern for project organisation will be set up which allows for expansion to larger projects.  For now code is split up into hello.html, top.js, main.js and bottom.js all within a single folder.
 
 ### hello.html
 
@@ -80,7 +280,7 @@ The script lines in the head load elements of the babylon.js library.  The full 
 
 Below this some cascading stylesheet style is added and you are free to modify this.  The # sign indicates style which will only be applied to the single HTML element which has id="renderCanvas".
 
-BabylonJS relies on [WebGL}(https://www.khronos.org/api/webgl) to provide a low level 3D graphic API which can be accessed by javaScript and displayed within an HTML canvas.  WebGL is supported by major browsers including Apple (Safari), Google (Chrome), Microsoft (Edge), and Mozilla (Firefox).  So 3D is supported in the browser without the need for any further plugin software.
+BabylonJS relies on [WebGL](https://www.khronos.org/api/webgl) to provide a low level 3D graphic API which can be accessed by javaScript and displayed within an HTML canvas.  WebGL is supported by major browsers including Apple (Safari), Google (Chrome), Microsoft (Edge), and Mozilla (Firefox).  So 3D is supported in the browser without the need for any further plugin software.
 
 The `<body></body>` of the page is quite simple.  A `<canvas>` element will provide an area which can render an image described in WGL and this will be referenced by the unique identifier id="renderCanvas".
 
