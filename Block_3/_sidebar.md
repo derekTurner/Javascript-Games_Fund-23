@@ -4,6 +4,10 @@
 * [<b>BabylonJS</b>](/Block_3/README.md "Block 3")
 * [Basics](Block_3/section_1/html5_intro.md)
 * [Refactor Basics](Block_3/section_1b/refactor.md)
+* [Setup PC](Block_3/section_1c/setup.md)
+* [Typescript on Docker](Block_3/section_1d/dev.md)
+* [BabylonJS on Docker](Block_3/section_1e/dev.md)
+
 
 * [Changing scenes](Block_3/section_4/section_4.md)
 * [Frame Animation](Block_3/section_6/section_6.md)
