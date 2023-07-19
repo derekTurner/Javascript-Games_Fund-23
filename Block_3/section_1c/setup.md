@@ -1,6 +1,23 @@
 ## Setting up PC 
 
-To progress from the playground Babylon can be set up on your local machine.  One way to do this would be to  add the babylon dependencies to a docker container.  This section describes the process of setting up Docker on a local PC together with useful programmes to interface between the editor and github.
+To progress from using the playground Babylon can be set up on your local machine.  This can be done by setting up a node enviironment and installing the required modules.
+
+Node can be used in several ways.
+
+1. Install node on the windows machine aan work  locally.  This will cause node modules to be installed locally with the drawback  they can be hard to delete and that it is difficult to maintain several projects at once which may need different node dependancies.
+
+2. Use a linux installation on a separate dedicated machine.  This should work fine but still needs care to maintain different dependancies for separate projects.
+
+3. Use linux running on a cloud based bachine such as and AWS instance.  Again fine, but take care over back up.
+
+4. Use linux running on a virtual machine locally.
+
+5. Use a fully containerised environment within Docker.
+
+6. Utilise the features of Visual Studio Code and Docker to open local files in a container as and when needed and copy these files to github (taking care not to copy node modules to github). This iss my preferred approach.
+
+
+This section describes the process of setting up Docker on a local PC together with useful programmes to interface between the editor and github.
 The primary editor will be Visual Studio Code.
 Docker containers will be used to manage the development environment.
 Windows Subsystem for Linux WSL2 will be required to support Docker running Windows 11 (or windows 10).
@@ -32,14 +49,15 @@ Further extensions will be installed to VSC as required.
 Windows subsystem for Linux is easy to install on windows version beyond Windows 10 Home Version 21H1
 
 The current system used a the time of writing these notes is:
+```
+    Edition: 	  Windows 11 Home
 
-    Edition:	Windows 11 Home
+    Version:	  22H2
 
-    Version:	21H2
+    OS build:	  22621.1992
 
-    OS build:	22000.832
-
-    Experience:	Windows Feature Experience Pack 1000.22000.832.0
+    Experience:	Windows Feature Experience Pack 1000.22644.1000.0
+```
 
 
 WSL allows a command line linux distribution to be installed.  This is essentially needed to support the Docker application.
@@ -48,9 +66,9 @@ It is possible to go on to allow GUI linux applications to run on the PC, but th
 
 Microsoft documents supporting WSL can be found [here](https://docs.microsoft.com/en-us/windows/wsl/).
 
-Windows powershell is likely to be on a PC in version 5.1.  Version 7.2 is the current version and this features support for docker containers.  Microsoft documentation discusses how to [migrate from powershell 5.1 to Powershell 7](https://docs.microsoft.com/en-us/powershell/scripting/whats-new/migrating-from-windows-powershell-51-to-powershell-7?view=powershell-7.2)
+Windows powershell is likely to be on a PC in version 5.1.  Version 7.3.6 is the current version and this features support for docker containers.  Microsoft documentation discusses how to [migrate from powershell 5.1 to Powershell 7](https://docs.microsoft.com/en-us/powershell/scripting/whats-new/migrating-from-windows-powershell-51-to-powershell-7)
 
-I will [download Powershell 7](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2) and install this with all default options along side powershell 5.1
+I will [download Powershell 7](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows) msi loader and install this with all default options along side powershell 5.1
 
 For a fresh installation of WSL open powershell *as an administrator* and enter the command:
 
@@ -135,12 +153,16 @@ WSL should be maintained in the background by windows update, but if you want to
 > wsl --update
 
 ```code
-Checking for updates...
-Downloading updates...
-Installing updates...
-This change will take effect on the next full restart of WSL. To force a restart, please run 'wsl --shutdown'.
-Kernel version: 5.10.102.1
-PS C:\Windows\System32>
+PowerShell 7.3.6
+PS C:\Users\username> wsl --update
+Installing: Windows Subsystem for Linux
+Windows Subsystem for Linux has been installed.
+PS C:\Users\username>
+PS C:\Users\username> wsl -l -v
+  NAME                   STATE           VERSION
+* Ubuntu                 Stopped         2
+  docker-desktop         Stopped         2
+  docker-desktop-data    Stopped         2
 ```
 
 >wsl --shutdown
@@ -149,21 +171,59 @@ PS C:\Windows\System32>
   NAME      STATE           VERSION
 * Ubuntu    Running         2
 ```
-To see what version of Ubuntu you are running go to the Ubuntu window and issue:
 
-> lsb_release -a
 
-```code
+
+
+You won't need to do it, but if you want to see wsl running you can open it from the windows start menu by typing 
+>wsl
+
+```
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+Welcome to Ubuntu 20.04 LTS (GNU/Linux 5.15.90.1-microsoft-standard-WSL2 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Wed Jul 19 09:53:13 BST 2023
+
+  System load:  0.0                Processes:             9
+  Usage of /:   0.5% of 250.92GB   Users logged in:       0
+  Memory usage: 7%                 IPv4 address for eth0: 172.26.146.93
+  Swap usage:   0%
+
+0 updates can be installed immediately.
+0 of these updates are security updates.
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+
+This message is shown once once a day. To disable it please create the
+/home/derek/.hushlogin file.
+derek@TurnerHub:/mnt/c/WINDOWS/system32$
+```
+
+To check the  Ubunttu version:
+>lsb_release -a
+
+```
+derek@TurnerHub:/mnt/c/WINDOWS/system32$ lsb_release -a
 No LSB modules are available.
 Distributor ID: Ubuntu
 Description:    Ubuntu 20.04 LTS
 Release:        20.04
 Codename:       focal
+derek@TurnerHub:/mnt/c/WINDOWS/system32$
 ```
 
 This is not the most recent version of Ubuntu, but I don't reccommend trying to change release version at this point.
 
-You can close both powershell and the ubuntu window now.
+You should close both powershell and the ubuntu window now.
 
 ## Docker
 
@@ -178,9 +238,11 @@ You should use CTRL + ALT + DEL to open task manager and look that virtualisatio
 Install docker from [Docker hub](https://docs.docker.com/desktop/install/windows-install/).
 
 
-![download docker](downloadDocker.png) and install.
+![download docker](downloadDocker.png) 
 
-Installation runs through:
+and install.
+
+Installation runs through :
 
 ![install docker](installDocker.png)
 
@@ -216,13 +278,13 @@ Now you can quit docker desktop from the system tray menu.
 
 If you dont already have one, [open a github account](https://github.com/join?source=login).  I suggest using your email address as password.
 
-When you join there is a short tutorial available to explain what gitHub is but from our point of view it is an online repository which will contain a copy of the code which you are using in your docker containers.
+When you join there is a short tutorial available to explain what gitHub is but from our point of view it is an online repository which will contain a copy of the code in the local folder which you wil be opening in your docker container.
 
 ![github home](githubHome.png)
 
 ## Github desktop
 
-This is an application which is a convenience utility to help manage the maintenance of copies of the git repositories on your local machine.  I find it useful, it is not strictly necessary but easier than tryint to manage git commands directly.
+This is an application which is a convenience utility to help manage the maintenance of copies of the git repositories on your local machine.  I find it useful, it is not strictly necessary but easier than trying to manage git commands directly.
 
 [Install Github desktop](https://desktop.github.com/)
 

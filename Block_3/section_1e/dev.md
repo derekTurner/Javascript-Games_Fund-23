@@ -1,11 +1,15 @@
 ## Running babylon on Vite
 
-You can make a copy of the previous test project folder to another folder if you want to keep it for later reference.  Never save the node modules, they are easily restored when needed.
+You can keep the test project folder later reference.  Never copy the node modules, they are easily restored when needed.
 
-Delete everything inside the publioc and src folders.
+Create a new folder named babylonProj in the babylonJSdev folder.
 
-Replace the contents of testProj/tsconfig.json with:
+Copy the files .gitignore, package-lock.json and package.json from testProj into babylonProj
 
+
+Add the following file named tsconfig.json to babylonProj
+
+**tsconfig.json**
 ```json
 {
   "compilerOptions": {
@@ -28,14 +32,17 @@ Replace the contents of testProj/tsconfig.json with:
     "skipLibCheck": true // skip type-checking of .d.ts files (it speeds up transpiling)
   },
   "include": ["src"] // specify location(s) of .ts files
-```}
+}
 ```
 
-Comments are not normally used in json, but may be used with typescript.
+
+Comments are not normally used in json files, but may be used with typescript.
 The TSConfig referenc can be fond [here](https://www.typescriptlang.org/tsconfig).
 
-Replace the index.html file with the simple file:
 
+Add this index.html file to babylonProj:
+
+**index.html**
 ```html
 <!DOCTYPE html>
 <html>
@@ -46,10 +53,14 @@ Replace the index.html file with the simple file:
     <body> </body>
 </html>
 <script type="module" src="./src/index.ts"></script>
-
 ```
-Now create index.ts and createStartScene.ts inside testProj/src to display a simple scene.
 
+Add an empty public folder and an empty src folder to babylonProj.
+
+
+Now create index.ts and createStartScene.ts inside babylonProj/src to display a simple scene.
+
+**babylonProj/src/index.ts**
 ```ts
 import { Engine, Scene } from "@babylonjs/core";
 import createStartScene from "./createStartScene";
@@ -69,8 +80,9 @@ eng.runRenderLoop(() => {
     startScene.scene.render();
 });                  
 ```
-Also add the startScene.ts module for the scene details.
+Also add the createStartScene.ts module for the scene details.
 
+**babylonProj/src/createStartScene.ts**
 ```ts
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
@@ -135,22 +147,68 @@ export default function createStartScene(engine) {
 }
 ```
 
-Check that the terminal prompt is still in the devContainer
+Now add the stylesheet file main.css inside babylonProj/src .
 
-```code
-node ➜ /workspaces/devContainer/testProj $
+**babylonProj/src/main.css**
+```css
+body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#renderCanvas {
+    width: 100%;
+    height: 100%;
+}
 ```
 
-Then run in the developer mode.
 
->npm run dev
+At this point the file structure should be:
+
+![project structure](projStructure.png)
+
+No files should be highligted in red and no lines should be underlined in red.  These are indications which Typescript adds to highlight errors!
+
+Now to run this project, change the directory that the terminal is addressing:
+
+Click on th folder babylonProj and "open in integrated terminal".
+
+This is done rather than cd into the folder so that any installation will be separate from the parent folder.  However the node modules from the parent folder are known to the system and so installations will not be duplicated.
+
+There are now two terminals running and it is easy to move between root and project terminals.
+
+Check that the terminal prompt is now in the correct folder
+
+```code
+node ➜ /workspaces/babylonJSdev/babylonProj (main) $
+```
+
+How install the files required by package.json in the project folder.
+
+>npm install
 
 View in browser:
 
+![in browser](viewBrowser.png)
 
 To close the application in the terminal.
 
 >CTRL + C
+
+### Error fixing
+
+If you encounter EOI error -5 at any point this means that the container is no longer in step with the edited file.
+
+Don't change the contents from the file explorer while a container is running.
+
+It is easy to come back to local editing by CTL shift P and choosing Dev Containers: reopen file locally.
+
+If you see these errors.  Close and destroy the container and restart the PC.
+
+### Comments on operation
 
 Note that the scene still works if the individual objects are not passed back with the scene.  So for instance editing createStartScene.ts to remove lines will still work.
 
@@ -170,6 +228,39 @@ Note that the scene still works if the individual objects are not passed back wi
 ```
 
 Passing back the objects with the scene is a pattern intended to make the objects individually accessible later.  Its usefulness will depend on context.
+
+Note also that because the babylon framework has been imported it is no longer necessary to use the BABYLON keyword in lines such as
+
+```javascript
+ let box = MeshBuilder.CreateBox("box", scene);
+```
+
+Typescript demands stricter syntax than javaScript, that is one way in which it reduces errors.
+
+You must ensure that all the elements added to the variable that are included in the interface.  If you decide to add a new shape that must be in the interface as well.  However the use of ? means optional so if you decide to remove the box the interface will not complain that it is missing.
+
+```javascript
+export default function createStartScene(engine) {
+    interface SceneData {
+        scene:Scene,
+        box?: Mesh,
+        light?: Light
+        sphere?: Mesh,
+        ground?: Mesh,
+        camera?:Camera
+    };
+
+    let that:SceneData = {scene:new Scene(engine)};
+    that.scene.debugLayer.show();
+
+    that.box = createBox(that.scene);
+    that.light = createLight(that.scene);
+    that.sphere = createSphere(that.scene);
+    that.ground = createGround(that.scene);
+    that.camera = createArcRotateCamera(that.scene);
+    return that;
+}
+```
 
 ## Building and deployment
 
@@ -197,17 +288,16 @@ Issue the build command.
 > testproj@0.0.0 build
 > tsc && vite build
 
-vite v4.2.1 building for production...
-✓ 1163 modules transformed.
-dist/index.html                     0.30 kB
+✓ 1179 modules transformed.
+dist/index.html                     0.30 kB │ gzip:   0.22 kB
 dist/assets/index-d6d7b775.css      0.10 kB │ gzip:   0.10 kB
-dist/assets/index-cf92da09.js   3,504.03 kB │ gzip: 812.52 kB
+dist/assets/index-3c6ef202.js   3,610.89 kB │ gzip: 836.26 kB
 
 (!) Some chunks are larger than 500 kBs after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 19.23s
+✓ built in 41.88s
 ```
 
 There are some configuration files which could be optimised but the build has worked and can be seen in the dist folder.  Before you can uise this you will need to refresh VScodes view of the folder structure.

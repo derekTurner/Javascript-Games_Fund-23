@@ -1,10 +1,22 @@
-# Running BabylonJS in a Development environment
+# Running Typescript in a Development environment
 
-This is an adaptation of the tutorial [Using Vite with Babylon.js](https://doc.babylonjs.com/guidedLearning/usingVite) to a docker development system and and the typescript language.
+This is an adaptation of the tutorial [Using Vite with Babylon.js](https://doc.babylonjs.com/guidedLearning/usingVite) to a docker development system and and the typescript language.  Firstly an environment will be set up and then vite will be used in this environment to run a simple typescript application.
 
 ## Setting up the environment
 
-Before starting you will need docker desktop installed (currently V 4.15.0) and running.
+Before starting you will need docker desktop installed and running.  The Help|about tab shows version details.
+
+```
+Version: 1.80.1 (user setup)
+Commit: 74f6148eb9ea00507ec113ec51c489d6ffb4b771
+Date: 2023-07-12T17:22:07.651Z
+Electron: 22.3.14
+ElectronBuildId: 21893604
+Chromium: 108.0.5359.215
+Node.js: 16.17.1
+V8: 10.8.168.25-electron.0
+OS: Windows_NT x64 10.0.22621
+```
 
 Then you will need VScode with the devContainers extension installed.
 
@@ -12,9 +24,15 @@ Then you will need VScode with the devContainers extension installed.
 
 This will allow any local folder to be run in a docker development container and is an easy way to run with a development environment.
 
-Create a folder in the local file system.  I have called this devContainer.
+Using github desktop, create a new repository named babylonJSdev.  This will be your working space for babylon code development.
 
-Create a blank file in the folder called dev.md.
+> File|New Reppository or CTRL + N
+
+![now repository](newRepo.png)
+
+Open this in visual studio code and create a blank file in the folder called dev.md.  You can use this file subsequently to keep notes on your  code development as you go.
+
+![notes](notes.png)
 
 In VScode 
 
@@ -24,13 +42,31 @@ to show a list of commands and select open folder in container.
 
 ![dev menu](devmenu.png)
 
-This will then open a browser dialog to choose the devContainer folder.
+Click on Open Foldwer in Container. This will then open a browser dialog to choose the devContainer folder and open.
+
+![choose folder](chooseFolder.png)
+
 
 On the first time of opening a prompt appears asking what type of container is needed  I chose 'Node & Typescript'
 
-Then you are asked what additional facilities you need from a large checklist.  I selected none.
+![node and typescript](nodeAndTypescript.png)
 
-The system then takes time to create the container image.  When this is complete docker desktop shows that the container is running.
+Then you are asked to choose a node version, I have accepted the default version 20-bullseye.
+
+![node 20](bullseye.png)
+
+
+Then you are asked what additional features you need from a large checklist.  I selected none and pressed ok.
+
+![additional features](addFeatures.png)
+
+The system then takes time to create the container image.  
+
+![reading container](readingConfig.png)
+
+Click on show log to view progress, be patient.
+
+When this is complete docker desktop shows that the container is running.
 
 ![container running](containerRunning.png)
 
@@ -38,7 +74,7 @@ The file structure which has been created in the container is
 
 ![initial file structure](initialFilestructure.png)
 
-This shows the dev.md file which will become this document together with the firse image for display.
+This shows the dev.md file which will be available as a place  tpo keep working notes.
 
 The .devContainer folder contains devcontainer.json which shows that the nature of the container is based on node and typescript.
 
@@ -48,7 +84,7 @@ The .devContainer folder contains devcontainer.json which shows that the nature 
 {
 	"name": "Node.js & TypeScript",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:0-18"
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -65,12 +101,11 @@ The .devContainer folder contains devcontainer.json which shows that the nature 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }
-
 ```
-Opening a terminal the prompt should appear as
+Open a terminal from the VSC menu.  The prompt should appear as
 
 ```code
-node ➜ /workspaces/devContainer $ 
+node ➜ /workspaces/babylonJSdev (main) $ 
 ```
 
 The node version can be checked by 
@@ -78,7 +113,7 @@ The node version can be checked by
 >node -v
 
 ```code
-v18.15.0
+v20.3.1
 ```
 
 The typescript version is checked by:
@@ -86,50 +121,96 @@ The typescript version is checked by:
 >tsc -v
 
 ```code
-Version 5.0.3
+Version 5.1.6
 ```
 
 Install vite with
 
 >npm install vite
 
-As this runs you are prompted to choose the framework you want to scaffold.  There are options to work with web frameworks such as react, but for BabylonJS the basic choice is vanila.
+This led to a comment inviting an update to npm.
 
-![vanilla framework](vanilla.png)
+```
+3 packages are looking for funding
+  run `npm fund` for details
+npm notice 
+npm notice New minor version of npm available! 9.6.7 -> 9.8.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v9.8.0
+npm notice Run npm install -g npm@9.8.0 to update!
+npm notice
+```
 
-You are then prompted to select a variant and Typescript is selected.
+Folllow any advice to update.
 
-![selectTypescript](selectTypesript.png)
+> npm install -g npm@9.8.0
 
-Once the loading process has completed a package.json file is crated in the .devcontainer folder, this displays the dependancy for Vite.
+```
+added 1 package in 2s
+
+28 packages are looking for funding
+  run `npm fund` for details
+```
+
+Once the loading process has completed a package.json file is crated in the babylonJSdev folder, this displays the dependancy for Vite.
 
 ```json
+{
   "dependencies": {
-    "vite": "^4.2.1"
+    "vite": "^4.4.4"
   }
+}
 ```
 
 Now install babylon core.
 
 >npm i -D @babylonjs/core
 
+```
+added 1 package, and audited 10 packages in 22s
+
+3 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+```
 and also the inspector to make debugging easier.
 
 >npm i -D @babylonjs/inspector
 
+```
+added 16 packages, and audited 26 packages in 39s
+
+3 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+```
+
+Also add the babylon loaders required to handle meshes.
+
+>npm i -D @babylonjs/loaders
+
+```
+up to date, audited 26 packages in 3s
+
+3 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+```
 When these are completed the package.json file will have been modified to show the babylon elements as devDependencies because of the -D flag used on installation.
 
 ```json
 {
   "dependencies": {
-    "vite": "^4.2.1"
+    "vite": "^4.4.4"
   },
   "devDependencies": {
-    "@babylonjs/core": "^5.53.0",
-    "@babylonjs/inspector": "^5.53.0"
+    "@babylonjs/core": "^6.12.5",
+    "@babylonjs/inspector": "^6.12.5",
+    "@babylonjs/loaders": "^6.12.5"
   }
 }
-
 ```
 
 ## Running a test typescript project
@@ -137,6 +218,61 @@ When these are completed the package.json file will have been modified to show t
 To initialise a typescript project based on the vanilla-ts framework vite with a project name testProj
 
 >npm init vite
+
+This asks for permission to add packages:
+
+```
+Need to install the following packages:
+  create-vite@4.4.0
+Ok to proceed? (y) 
+```
+
+> Enter y
+
+```
+? Project name: › vite-project
+```
+
+> change to testProj
+
+```
+? Package name: › testproj
+```
+
+> Accept testproj
+
+```
+? Select a framework: › - Use arrow-keys. Return to submit.
+❯   Vanilla
+    Vue
+    React
+    Preact
+    Lit
+    Svelte
+    Solid
+    Qwik
+    Others
+```
+
+> Select vanilla
+
+```
+? Select a variant: › - Use arrow-keys. Return to submit.
+❯   TypeScript
+    JavaScript
+```
+
+>Select  typescript
+
+```
+Scaffolding project in /workspaces/babylonJSdev/testProj...
+
+Done. Now run:
+
+  cd testProj
+  npm install
+  npm run dev
+```
 
 This creates a new folder with the name testProj and a starting structure:
 
@@ -157,8 +293,8 @@ Within the testProj folder is a new package.json file which includes the names o
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^4.9.3",
-    "vite": "^4.2.0"
+    "typescript": "^5.0.2",
+    "vite": "^4.4.0"
   }
 }
 ```
@@ -169,9 +305,9 @@ To test this out the dependancies must be installed by the node package manager.
 >npm install
 
 ```code
-added 15 packages, and audited 16 packages in 8s
+added 9 packages, and audited 10 packages in 10s
 
-5 packages are looking for funding
+3 packages are looking for funding
   run `npm fund` for details
 
 found 0 vulnerabilities
@@ -180,7 +316,7 @@ found 0 vulnerabilities
 >npm run dev
 
 ```code
-VITE v4.2.1  ready in 419 ms
+  VITE v4.4.4  ready in 306 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
@@ -223,7 +359,7 @@ This includes a div with id as 'app' where the javascript will generate output d
 import './style.css'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
-import { setupCounter } from './counter'
+import { setupCounter } from './counter.ts'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -246,7 +382,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
 ```
 
-This file first imports the images an stylesheet before importing the function setupCounter from the module file counter.ts.
+This file first imports a stylesheetand images before importing the function setupCounter from the module file counter.ts.
 
 The output is created by adding to the innerHTML of the #app div.
 
@@ -269,7 +405,7 @@ export function setupCounter(element: HTMLButtonElement) {
 }
 ```
 
-The function setupCounterdefines a local variable counter with starting value zero and a private function 'setCounter' which will display the count value passed as a parameter to the HTMLButtonElement represented by the parameter 'element'.
+The function setupCounter defines a local variable counter with starting value zero and a private function 'setCounter' which will display the count value passed as a parameter to the HTMLButtonElement represented by the parameter 'element'.
 
 An event listener is added to the button which will call setCounter with an incremented value on each click.
 
@@ -281,3 +417,16 @@ To close the application in the terminal.
 
 >CTRL + C
 
+From gitthub desktop add comments and commit the changes to main.
+
+![test project changes](testprojcchanges.png)
+
+>Commit
+
+![publish](publish.png)
+
+>Publish
+
+Check the repository on gitHub note that all the project files are uploaded, but not the node files because you selected .gitnore node when you created the repository.
+
+![github](published.png)
