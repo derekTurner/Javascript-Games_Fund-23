@@ -40,7 +40,7 @@ In VScode
 
 to show a list of commands and select open folder in container.
 
-![dev menu](devmenu.png)
+![dev menu](devMenu.png)
 
 Click on Open Foldwer in Container. This will then open a browser dialog to choose the devContainer folder and open.
 
