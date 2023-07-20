@@ -7,8 +7,8 @@
 * [Setup PC](Block_3/section_1c/setup.md)
 * [Typescript on Docker](Block_3/section_1d/dev.md)
 * [BabylonJS on Docker](Block_3/section_1e/dev.md)
-
-
+* [Changing Machine](Block_3/section_1f/change.md)
+<hr/>
 * [Changing scenes](Block_3/section_4/section_4.md)
 * [Frame Animation](Block_3/section_6/section_6.md)
 * [Mesh Animation](Block_3/section_7/section_7.md)

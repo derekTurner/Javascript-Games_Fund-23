@@ -2,6 +2,14 @@
 
 Using Babylon to create interactive scenes and games.
 
-1. Describe the code for a basic scene and identify boilerplate code around the constructed scene.
-2. Refactor to a file structure to be adopted as a working pattern.
+1.  Setup and first scene 
+    *  Basics: online documentation, playground and running locally.
+    *  Refactor Basics: Change javascript file structure for expansion.
+    *  Setup PC: In preparation to work in containers.
+    *  Typescript on Docker: Run a simple counter using Vite
+    *  BabylonJS on Docker: Run a demo scene using Vite and build distributable code.
+    *  Change Machine: use gitHub to run code on different machine.
+2.  Shapes Light and Texture
+
+
    
