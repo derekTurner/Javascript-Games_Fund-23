@@ -38,7 +38,7 @@ If you don't see the extension you require listed you can just type the name in 
 
 Type Live Server in the search bar.
 
-![Live Server extension](liveServer.png)
+![Live Server extension](liveServerExt.png)
 
 Installing  this will allow any website code in the editor to be previewed in a browser.
 
