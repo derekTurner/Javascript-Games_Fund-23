@@ -165,7 +165,7 @@ The code now works fine.
     width="100%" 
     scrolling="no" 
     title="Refactored Basic Scene" 
-    src="Block_3/section_1f/dist/index.html" 
+    src="Block_3/section_1f/dist_1f/index.html" 
     frameborder="no" 
     loading="lazy" 
     allowtransparency="true" 
