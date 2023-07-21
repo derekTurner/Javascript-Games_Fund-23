@@ -8,6 +8,7 @@
 * [Typescript on Docker](Block_3/section_1d/dev.md)
 * [BabylonJS on Docker](Block_3/section_1e/dev.md)
 * [Changing Machine](Block_3/section_1f/change.md)
+*  [Managing Vite](Block_3/section_1g/vite.md)
 <hr/>
 * [Changing scenes](Block_3/section_4/section_4.md)
 * [Frame Animation](Block_3/section_6/section_6.md)
