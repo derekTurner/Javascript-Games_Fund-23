@@ -6,7 +6,7 @@
 * [Refactor Basics](Block_3/section_1b/refactor.md)
 * [Setup PC](Block_3/section_1c/setup.md)
 * [Typescript , Vite and Deno on Docker](Block_3/section_1d_deno/denoEnv.md)
-* [BabylonJS on Docker](Block_3/section_1e/dev.md)
+* [BabylonJS on Docker](Block_3/section_1e_deno/firstBabylon.md)
 * [Changing Machine](Block_3/section_1f/change.md)
 *  [Managing Vite](Block_3/section_1g/vite.md)
 <hr/>
