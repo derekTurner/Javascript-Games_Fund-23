@@ -14,7 +14,7 @@ To view your site on the development server you should enter `npm run dev`.
 
 If you edit code you can reload by `CTRL + C` and `npm run dev`:
 
-If you build a site using ` npm run build` you may notice javascript transpiled copies of typescript files appearing in the src folder. If you edit the typescript code and then `npm run dev` the server will serve the old javascript files and not your edited typescript files. If you `CTRL + C` and then **delete** any javascript files, the development server will serve from the Typoescript files and you will see your new changes. In effect, you should not build until you are pretty well finished with the code development.
+If you build a site using ` npm run build` you may notice javascript transpiled copies of typescript files appearing in the src folder. If you edit the typescript code and then `npm run dev` the server will serve the old javascript files and not your edited typescript files. If you `CTRL + C` and then **delete** any javascript files, the development server will serve from the Typescript files and you will see your new changes. In effect, you should not build until you are pretty well finished with the code development.
 
 ### Adding small example folders
 
@@ -226,7 +226,7 @@ These can be copied using file explorer and deployed on any html server.
 
 When you are over the small example phase and ready to start a serious project I reccommend starting a new project folder named after the project. Perhaps even starting from scratch.
 
-Vite acts as a server so you can make other folders within the babylonProj folder and
+Vite acts as a server so you can make other folders within the babylonProj folder and work from there.
 
 
 

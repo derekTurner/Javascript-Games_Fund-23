@@ -61,7 +61,7 @@ Add an empty public folder and an empty src folder to babylonProj.
 Now create index.ts and createStartScene.ts inside babylonProj/src to display a simple scene.
 
 **babylonProj/src/index.ts**
-```ts
+```javascript
 import { Engine, Scene } from "@babylonjs/core";
 import createStartScene from "./createStartScene";
 import './main.css';
@@ -83,7 +83,7 @@ eng.runRenderLoop(() => {
 Also add the createStartScene.ts module for the scene details.
 
 **babylonProj/src/createStartScene.ts**
-```ts
+```javascript
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import { Scene, ArcRotateCamera, Vector3, HemisphericLight, 
@@ -212,7 +212,7 @@ If you see these errors.  Close and destroy the container and restart the PC.
 
 Note that the scene still works if the individual objects are not passed back with the scene.  So for instance editing createStartScene.ts to remove lines will still work.
 
-```ts
+```javascript
     //that.box = createBox(that.scene);
     //that.light = createLight(that.scene);
     //that.sphere = createSphere(that.scene);
@@ -270,13 +270,13 @@ Close the running application.
 
 Remove the inspector fromn the finished code in createStartscene.ts.
 
-```ts
+```javascript
 // import "@babylonjs/core/Debug/debugLayer";
 // import "@babylonjs/inspector";
 ```
 and 
 
-```ts
+```javascript
     // that.scene.debugLayer.show();
 ```
 
@@ -335,7 +335,7 @@ Note that this is now running without a node environment as previewed below.
     width="60" 
     scrolling="no" 
     title="Hello Page" 
-    src="Block_3/section_1e/dist_1e/index.html" 
+    src="Block_3/section_1e_node/dist_1e/index.html" 
     frameborder="no" 
     loading="lazy" 
     allowtransparency="true" 
