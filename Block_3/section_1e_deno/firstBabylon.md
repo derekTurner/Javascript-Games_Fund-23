@@ -1,8 +1,11 @@
 ## Running babylon on Vite with Deno
 
+Could get this working, but not with reliable operation for multi projects try again next session.
+
 To allow babylon to run the core babylon libraries should be loaded.  This can be achieved by creating a package.json file in the BabylonjsProject folder which lists the babylon dependancies.  
 
-```JSON
+**package.json**
+``` json
 {
     "name": "@deno/babylonjsproject",
     "description": "Babylon JS development",
@@ -45,6 +48,20 @@ If the plan was to create a single babylon project it could sit in the Babylonjs
 
 Create a new project named demo inside BabylonjsProject and move into this the public and src folders, deno.json and index.html
 
+Edit deno.json to remove the reference to --node_modules.  This will prevent deno from creating a duplicate copy of the node modules.  
+
+**deno.json**
+```javascript
+{
+  "tasks": {
+    "dev": "deno run -A npm:vite",
+    "build": "deno run -A npm:vite build",
+    "preview": "deno run -A  npm:vite preview",
+    "serve": "deno run --allow-net --allow-read https://deno.land/std@0.157.0/http/file_server.ts dist/"
+  }
+}
+```
+
 > cd demo
 
 > deno task dev
@@ -53,13 +70,19 @@ The familiar counter example runs in the browser.
 
 > ctrl + c
 
-The demo folder now as some node modules and a demo.lock file.
+The demo folder now has a deno.lock  file.
 
 ![demo folder](images/demoFolder.png)
 
+Open the integrated terminal in the demo folder and check that the typescript still runs from this folder.
+
+> deno task dev
+
+## Adding projects
+
 Now any number of folders can be made to house separate small projects.
 
-Add a new folder named "example1" in the BabylonjsProject folder and opy into this the public and src folders, deno.json and index.html from the demo folder.
+Add a new folder named "example1" in the BabylonjsProject folder and copy into this the public and src folders, deno.json and index.html from the demo folder.
 
 Change directories into example1.  
 
@@ -124,95 +147,116 @@ Edit index.html file in example 1 to read:
 <script type="module" src="./src/index.ts"></script>
 ```
 
-Delete the contents of the src and public folders in example1 ready for new code.
+Delete the counter.ts, main.ts, style.css and typescript.svg from the example1 folder leaving vite-env.d.ts in place ready for new code.
 
+Delete the contents of the public folder completely.
 
-Now create index.ts and createStartScene.ts inside babylonProjexample1/src to display a simple scene.
+Now add index.ts and createStartScene.ts inside babylonProjexample1/src to display a simple scene.
 
 **babylonProj/src/index.ts**
-```ts
-import { Engine, Scene } from "@babylonjs/core";
+```javascript
+import { Engine } from "@babylonjs/core";
 import createStartScene from "./createStartScene";
 import './main.css';
 
 const CanvasName = "renderCanvas";
 
-let canvas = document.createElement("canvas");
+const canvas = document.createElement("canvas");
 canvas.id = CanvasName;
 
 canvas.classList.add("background-canvas");
 document.body.appendChild(canvas);
 
-let eng = new Engine(canvas, true, null, true);
-let startScene = createStartScene(eng);
+const eng = new Engine(canvas, true, null, true);
+const startScene = createStartScene(eng);
 eng.runRenderLoop(() => {
     startScene.scene.render();
-});                  
+});                       
 ```
 Also add the createStartScene.ts module for the scene details.
 
 **babylonProj/src/createStartScene.ts**
-```ts
+```javascript
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
-import { Scene, ArcRotateCamera, Vector3, HemisphericLight, 
-         MeshBuilder, 
-         Mesh,
-         Light,
-         Camera} from "@babylonjs/core";
+import {
+  ArcRotateCamera,
+  Camera,
+  Engine,
+  HemisphericLight,
+  Light,
+  Mesh,
+  MeshBuilder,
+  Scene,
+  Vector3,
+} from "@babylonjs/core";
 
-function createBox(scene){
-    let box = MeshBuilder.CreateBox("box", scene);
-    box.position.y = 3;
-    return box;
-}
-    
-function createLight(scene){
-    const light = new HemisphericLight("light", new Vector3(0, 1, 0),scene);
-    light.intensity = 0.7;
-    return light;
-}
-   
-function createSphere(scene){
-    let sphere = MeshBuilder.CreateSphere("sphere", { diameter: 2, segments: 32 }, scene);
-    sphere.position.y = 1;
-    return sphere;
-}
-   
-function createGround(scene){
-    let ground = MeshBuilder.CreateGround("ground", { width: 6, height: 6 }, scene);
-    return ground;
+function createBox(scene: Scene) {
+  const box = MeshBuilder.CreateBox("box", scene);
+  box.position.y = 3;
+  return box;
 }
 
-function createArcRotateCamera(scene){
-    let camAlpha = -Math.PI / 2,
-    camBeta  =  Math.PI / 2.5,
-    camDist  =  10,
-    camTarget = new Vector3(0, 0, 0); 
-    let camera = new ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
-    camera.attachControl(true);
-    return camera;
+function createLight(scene: Scene) {
+  const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
+  light.intensity = 0.7;
+  return light;
 }
 
-export default function createStartScene(engine) {
-    interface SceneData {
-        scene:Scene,
-        box?: Mesh,
-        light?: Light,
-        sphere?: Mesh,
-        ground?: Mesh,
-        camera?:Camera
-    };
+function createSphere(scene: Scene) {
+  const sphere = MeshBuilder.CreateSphere("sphere", {
+    diameter: 2,
+    segments: 32,
+  }, scene);
+  sphere.position.y = 1;
+  return sphere;
+}
 
-    let that:SceneData = {scene:new Scene(engine)};
-    that.scene.debugLayer.show();
+function createGround(scene: Scene) {
+  const ground = MeshBuilder.CreateGround(
+    "ground",
+    { width: 6, height: 6 },
+    scene,
+  );
+  return ground;
+}
 
-    that.box = createBox(that.scene);
-    that.light = createLight(that.scene);
-    that.sphere = createSphere(that.scene);
-    that.ground = createGround(that.scene);
-    that.camera = createArcRotateCamera(that.scene);
-    return that;
+function createArcRotateCamera(scene: Scene) {
+  const camAlpha = -Math.PI / 2,
+    camBeta = Math.PI / 2.5,
+    camDist = 10,
+    camTarget = new Vector3(0, 0, 0);
+  const camera = new ArcRotateCamera(
+    "camera1",
+    camAlpha,
+    camBeta,
+    camDist,
+    camTarget,
+    scene,
+  );
+  camera.attachControl(true);
+  return camera;
+}
+
+export default function createStartScene(engine: Engine) {
+  interface SceneData {
+    scene: Scene;
+    box?: Mesh;
+    light?: Light;
+    sphere?: Mesh;
+    ground?: Mesh;
+    camera?: Camera;
+  }
+
+  const that: SceneData = { scene: new Scene(engine) };
+  that.scene.debugLayer.show();
+
+  that.box = createBox(that.scene);
+  that.light = createLight(that.scene);
+  that.sphere = createSphere(that.scene);
+  that.ground = createGround(that.scene);
+  that.camera = createArcRotateCamera(that.scene);
+  return that;
 }
 ```
 
@@ -237,9 +281,9 @@ body {
 
 At this point the file structure should be:
 
-![project structure](projStructure.png)
+![project structure](images/projStructure.png)
 
-The TS files will contain warnings of errors.  These are indications which Typescript adds to highlight errors!
+The TS files will contain warnings of errors.  These are indications which Typescript adds to highlight errors!  The main issue is that typescript cant resolve the references to @babylon and to the dom.  This relates to the tsconfig file settings.  Accept these warnings because deno is not confused by them.
 
 Now to run this project, change the directory that the terminal is addressing:
 

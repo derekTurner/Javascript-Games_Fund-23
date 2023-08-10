@@ -78,7 +78,7 @@ This shows the dev.md file which will be available as a place  tpo keep working 
 
 The .devContainer folder contains devcontainer.json which shows that the nature of the container is based on node and typescript.
 
-```json
+``` json
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {

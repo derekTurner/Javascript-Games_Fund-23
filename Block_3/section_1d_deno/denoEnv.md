@@ -1,4 +1,4 @@
-# Running Typescript in a DenoD evelopment environment
+# Running Typescript in a Deno Development environment
 
 This is an adaptation of the tutorial [Using Vite with Babylon.js](https://doc.babylonjs.com/guidedLearning/usingVite) to a docker development system and and the typescript language, but rather than using nodejs it will use [Deno](https://deno.land/) which is a replacement for nodejs written by the author of nodejs.  This will have typescript as standard in the box and claims speed and security advantages.  Firstly an environment will be set up and then vite will be used in this environment to run a simple typescript application.
 
@@ -12,7 +12,7 @@ Before starting you will need docker desktop installed and running.
 
 Then you will need VScode with the devContainers extension installed.
 
-![devContainers](devContainers.png)
+![devContainers](images/devContainers.png)
 
 This will allow any local folder to be run in a docker development container and is an easy way to run with a development environment.
 
@@ -71,7 +71,24 @@ The file structure which has been created in the container is
 
 ![initial file structure](images/structure1.png)
 
-This shows the dev.md file which will be available as a place  tpo keep working notes.
+This shows the dev.md file which will be available as a place  to keep working notes.
+
+At some point you may be interrupted by the Deno for VScode extension.
+
+![deno vscode](images/denovscode.png)
+
+This does not assume that you are working on a deno project so you have to us use 
+
+>CTRL + Shift + P 
+
+Deno: Initialize Workspace Configuration command
+
+From the dialogue, enable dino linting and allow unstable apis.
+
+This creates a .vscode folder with settings.json
+
+![settings vscode](images/settingsvscode.png)
+
 
 The .devContainer folder contains devcontainer.json which shows that the nature of the container is based on deno.
 
@@ -142,7 +159,6 @@ REPL is running with all permissions allowed.
 To specify permissions, run `deno repl` with allow flags.
 ```
 
-Ahile deno is running you can enter:
 
 > Deno.version.deno
 
@@ -157,17 +173,11 @@ And Check tha t typescript is available out of the box.
 "5.1.6"
 ```
 
-Close deno for now.
+To stop deno running enter twice
 
-> ctrl+c
+> CTRL + C
 
 Confirm that you want to close.
-
-You may have noted that the dockerfile made vscode the owner of the deno file folder.  This ownership has to be extended to the working project folder, which we set up as babylonJSdeno.
-
-> vscode ➜ /deno $ cd ..
-
-> vscode ➜ / $ sudo chown -R vscode /workspaces/babylonJSdeno
 
 
 ## Install Vite
@@ -255,6 +265,15 @@ Note that the structure has a deno.json file rather than the package.json file w
 ```
 
 The "dev" line instructs deno to run the vite module which it will fine in the node-modules directory, and that starts the development server.
+
+The src folder also contains a typescript file:
+
+**vite-env.d.ts
+```javascript
+/// <reference types="vite/client" />
+```
+
+This is a note to the typescript transpiler to identify a particular reference type.  Note the line starts with three ///.
 
 To close the development server when you are ready:
 
@@ -345,13 +364,6 @@ This is a typescript app being served by the vite development server.  BabylonJS
 To close the application in the terminal.
 
 >CTRL + C
-
-From gitHub desktop note that the changing of ownership has generated a trust warning.  Trust this code.
-
-![trust code](images/trustme.png)
-
-add comments and commit the changes to main.
-
 
 
 ![test project changes](images/commitme.png)
