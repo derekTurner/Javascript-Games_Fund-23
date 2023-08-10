@@ -1,71 +1,82 @@
 ## Running babylon on Vite with Deno
-will be done in the 
-To allow babylon to run the core libraries should be loaded.  This 
 
-You can keep the test project folder later reference.  Never copy the node modules, they are easily restored when needed.
+To allow babylon to run the core babylon libraries should be loaded.  This can be achieved by creating a package.json file in the BabylonjsProject folder which lists the babylon dependancies.  
 
-Create a new folder named babylonProj in the babylonJSdev folder.
-
-Copy the files .gitignore, package-lock.json and package.json from testProj into babylonProject folder.
-
-
-
-Now install babylon core.
-
->npm i -D @babylonjs/core
-
-```
-added 1 package, and audited 10 packages in 22s
-
-3 packages are looking for funding
-  run `npm fund` for details
-
-found 0 vulnerabilities
-```
-and also the inspector to make debugging easier.
-
->npm i -D @babylonjs/inspector
-
-```
-added 16 packages, and audited 26 packages in 39s
-
-3 packages are looking for funding
-  run `npm fund` for details
-
-found 0 vulnerabilities
-```
-
-Also add the babylon loaders required to handle meshes.
-
->npm i -D @babylonjs/loaders
-
-```
-up to date, audited 26 packages in 3s
-
-3 packages are looking for funding
-  run `npm fund` for details
-
-found 0 vulnerabilities
-```
-When these are completed the package.json file will have been modified to show the babylon elements as devDependencies because of the -D flag used on installation.
-
-```json
+```JSON
 {
-  "dependencies": {
-    "vite": "^4.4.4"
-  },
-  "devDependencies": {
-    "@babylonjs/core": "^6.12.5",
-    "@babylonjs/inspector": "^6.12.5",
-    "@babylonjs/loaders": "^6.12.5"
+    "name": "@deno/babylonjsproject",
+    "description": "Babylon JS development",
+    "type": "module",
+    "scripts": {
+      "null": "deno run --allow-env --allow-sys null.ts"
+    },
+    "dependencies": {
+        "@babylonjs/core": "^6.12.5",
+        "@babylonjs/inspector": "^6.12.5",
+        "@babylonjs/loaders": "^6.12.5"
+    }
   }
-}
 ```
 
+The scripts line is just left as a null default here, there is never any intention that the null script will be run.
+
+This is giving acess to the node modules for Babylon version 6.
+
+To activate these dependancies, 
+
+> cd BabylonjsProject
+
+> deno task dev
+
+Watch as the dependancies are loaded and then the regular counter demonstration app starts to run.
+
+Close this off.
+
+> CTRL + C
 
 
+![babylon modules](images/babylonModules.png)
 
-Add the following file named tsconfig.json to babylonProj
+Now package.json sits alongside deno.json and the @babylonjs node modules sit along side vite.
+
+## Restructuring the project
+
+If the plan was to create a single babylon project it could sit in the BabylonjsProject folder.  However my intention it to create a number of small projects showing different aspects of babylon code, so some reorganisation of folder structure will be helpful.
+
+Create a new project named demo inside BabylonjsProject and move into this the public and src folders, deno.json and index.html
+
+> cd demo
+
+> deno task dev
+
+The familiar counter example runs in the browser.
+
+> ctrl + c
+
+The demo folder now as some node modules and a demo.lock file.
+
+![demo folder](images/demoFolder.png)
+
+Now any number of folders can be made to house separate small projects.
+
+Add a new folder named "example1" in the BabylonjsProject folder and opy into this the public and src folders, deno.json and index.html from the demo folder.
+
+Change directories into example1.  
+
+*(It is convenient to close the old terminal and open and open a new one in visual studio code by richt clicking over the selected folder and choosing open in integrated terminal. This avoids the need for cd.. and cd foldername)*
+
+> cd example1
+
+> deno task dev
+
+The familiar counter example runs in the browser.
+
+> ctrl + c
+
+The example 1 folder can now be edited to create a babylonjs scene.
+
+
+Add the following file named tsconfig.json to example1
 
 **tsconfig.json**
 ```json
@@ -98,7 +109,7 @@ Comments are not normally used in json files, but may be used with typescript.
 The TSConfig referenc can be fond [here](https://www.typescriptlang.org/tsconfig).
 
 
-Add this index.html file to babylonProj:
+Edit index.html file in example 1 to read:
 
 **index.html**
 ```html
@@ -106,17 +117,17 @@ Add this index.html file to babylonProj:
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Title of Your Project</title>
+        <title>Example 1</title>
     </head>
     <body> </body>
 </html>
 <script type="module" src="./src/index.ts"></script>
 ```
 
-Add an empty public folder and an empty src folder to babylonProj.
+Delete the contents of the src and public folders in example1 ready for new code.
 
 
-Now create index.ts and createStartScene.ts inside babylonProj/src to display a simple scene.
+Now create index.ts and createStartScene.ts inside babylonProjexample1/src to display a simple scene.
 
 **babylonProj/src/index.ts**
 ```ts
@@ -187,7 +198,7 @@ export default function createStartScene(engine) {
     interface SceneData {
         scene:Scene,
         box?: Mesh,
-        light?: Light
+        light?: Light,
         sphere?: Mesh,
         ground?: Mesh,
         camera?:Camera
@@ -205,7 +216,7 @@ export default function createStartScene(engine) {
 }
 ```
 
-Now add the stylesheet file main.css inside babylonProj/src .
+Now add the stylesheet file main.css inside example1/src .
 
 **babylonProj/src/main.css**
 ```css
@@ -228,43 +239,35 @@ At this point the file structure should be:
 
 ![project structure](projStructure.png)
 
-No files should be highligted in red and no lines should be underlined in red.  These are indications which Typescript adds to highlight errors!
+The TS files will contain warnings of errors.  These are indications which Typescript adds to highlight errors!
 
 Now to run this project, change the directory that the terminal is addressing:
 
-Click on th folder babylonProj and "open in integrated terminal".
+If the terminal is not already open on example1, click on the folder example1 and "open in integrated terminal".
 
-This is done rather than cd into the folder so that any installation will be separate from the parent folder.  However the node modules from the parent folder are known to the system and so installations will not be duplicated.
 
-There are now two terminals running and it is easy to move between root and project terminals.
-
-Check that the terminal prompt is now in the correct folder
 
 ```code
-node ➜ /workspaces/babylonJSdev/babylonProj (main) $
+node ➜ /workspaces/babylonJSdev/example1 (main) $
 ```
 
-How install the files required by package.json in the project folder.
+> deno task dev
 
->npm install
+```code
+VITE v4.4.9  ready in 1315 ms
 
-View in browser:
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+```
 
-![in browser](viewBrowser.png)
+The scene now runs in the browser, it takes a while to load first time.
 
-To close the application in the terminal.
+![running example 1](images/babylonexample1.png)
 
->CTRL + C
+This is success, however typescript is not picking up the links to modules and therefore displays lots of errors.
 
-### Error fixing
-
-If you encounter EOI error -5 at any point this means that the container is no longer in step with the edited file.
-
-Don't change the contents from the file explorer while a container is running.
-
-It is easy to come back to local editing by CTL shift P and choosing Dev Containers: reopen file locally.
-
-If you see these errors.  Close and destroy the container and restart the PC.
+This operation of babylon resolving a package.json is a valid action,  there are alternative approaches in deno to use deno.json file to add aliasses to imports or to use an import map, but these are not resolving the errors displayed.
 
 ### Comments on operation
 
@@ -384,7 +387,7 @@ So opening a separate window.
 
 Then run on live server on port 5500.
 
-![tested on server](tested.png)
+[tested on server](tested.png)
 
 Note that this is now running without a node environment as previewed below.
 
@@ -399,6 +402,43 @@ Note that this is now running without a node environment as previewed below.
     allowtransparency="true" 
     allowfullscreen="false">
 </iframe>
+
+
+## Github issue
+
+When uploading back to github I noted an issuse that I had insufficient privelidges to add an object to the repository database.  A [Stack overflow reference ](https://stackoverflow.com/questions/6448242/git-push-error-insufficient-permission-for-adding-an-object-to-repository-datab) helped me to resolve this.
+
+From the computer terminal application I cd to the GitHub/babylonJSdeno folder then check to find my name and group.
+
+```code
+# for yourname
+whoami
+# for yourgroup
+id -g -n <yourname>
+```
+
+Once I know who I am on the machine I can see the file ownership in the .git/objects folder
+
+```code
+cd .git/objects
+ls -al
+```
+
+This shows a list of files, most of which have my name and group ownership, but a few which do not.  This is repaired by
+
+```code
+sudo chown -R yourname:yourgroup *
+```
+
+A repeat
+
+```code
+ls -al
+```
+
+confirms the changes and allows upload via GitHub desktop or visual studio code in the normal way.
+
+
 
 
 

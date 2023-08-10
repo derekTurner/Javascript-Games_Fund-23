@@ -29,7 +29,7 @@ Publish this to github.
 
 Open this in visual studio code and create a blank file in the folder called dev.md.  You can use this file subsequently to keep notes on your  code development as you go.
 
-![notes](notes.png)
+![notes](images/notes.png)
 
 In VScode 
 
@@ -37,9 +37,9 @@ In VScode
 
 to show a list of commands and select open folder in container.
 
-![dev menu](devMenu.png)
+![dev menu](images/devMenu.png)
 
-Click on Open Foldwer in Container. This will then open a browser dialog to choose the devContainer folder and open.
+Click on Open Folder in Container. This will then open a browser dialog to choose the devContainer folder and open.
 
 ![choose folder](images/selectFolder.png)
 
@@ -166,7 +166,11 @@ Confirm that you want to close.
 You may have noted that the dockerfile made vscode the owner of the deno file folder.  This ownership has to be extended to the working project folder, which we set up as babylonJSdeno.
 
 > vscode ➜ /deno $ cd ..
-vscode ➜ / $ sudo chown -R vscode /workspaces/babylonJSdeno
+
+> vscode ➜ / $ sudo chown -R vscode /workspaces/babylonJSdeno
+
+
+## Install Vite
 
 Now vite can be installed with
 
@@ -342,7 +346,7 @@ To close the application in the terminal.
 
 >CTRL + C
 
-From gitthub desktop note that the changing of ownership has generated a trust warning.  Trust this code.
+From gitHub desktop note that the changing of ownership has generated a trust warning.  Trust this code.
 
 ![trust code](images/trustme.png)
 
