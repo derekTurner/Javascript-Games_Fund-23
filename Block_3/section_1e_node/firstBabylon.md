@@ -62,7 +62,7 @@ Now create index.ts and createStartScene.ts inside babylonProj/src to display a 
 
 **babylonProj/src/index.ts**
 ```javascript
-import { Engine, Scene } from "@babylonjs/core";
+import { Engine } from "@babylonjs/core";
 import createStartScene from "./createStartScene";
 import './main.css';
 
@@ -86,65 +86,88 @@ Also add the createStartScene.ts module for the scene details.
 ```javascript
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
-import { Scene, ArcRotateCamera, Vector3, HemisphericLight, 
-         MeshBuilder, 
-         Mesh,
-         Light,
-         Camera} from "@babylonjs/core";
-
-function createBox(scene){
-    let box = MeshBuilder.CreateBox("box", scene);
+import {
+    Scene,
+    ArcRotateCamera,
+    Vector3,
+    HemisphericLight,
+    MeshBuilder,
+    Mesh,
+    Light,
+    Camera,
+    Engine,
+  } from "@babylonjs/core";
+  
+  
+  function createBox(scene: Scene) {
+    let box = MeshBuilder.CreateBox("box",{size: 1}, scene);
     box.position.y = 3;
     return box;
-}
-    
-function createLight(scene){
-    const light = new HemisphericLight("light", new Vector3(0, 1, 0),scene);
+  }
+
+  
+  function createLight(scene: Scene) {
+    const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
     return light;
-}
-   
-function createSphere(scene){
-    let sphere = MeshBuilder.CreateSphere("sphere", { diameter: 2, segments: 32 }, scene);
+  }
+  
+  function createSphere(scene: Scene) {
+    let sphere = MeshBuilder.CreateSphere(
+      "sphere",
+      { diameter: 2, segments: 32 },
+      scene,
+    );
     sphere.position.y = 1;
     return sphere;
-}
-   
-function createGround(scene){
-    let ground = MeshBuilder.CreateGround("ground", { width: 6, height: 6 }, scene);
+  }
+  
+  function createGround(scene: Scene) {
+    let ground = MeshBuilder.CreateGround(
+      "ground",
+      { width: 6, height: 6 },
+      scene,
+    );
     return ground;
-}
-
-function createArcRotateCamera(scene){
+  }
+  
+  function createArcRotateCamera(scene: Scene) {
     let camAlpha = -Math.PI / 2,
-    camBeta  =  Math.PI / 2.5,
-    camDist  =  10,
-    camTarget = new Vector3(0, 0, 0); 
-    let camera = new ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
+      camBeta = Math.PI / 2.5,
+      camDist = 10,
+      camTarget = new Vector3(0, 0, 0);
+    let camera = new ArcRotateCamera(
+      "camera1",
+      camAlpha,
+      camBeta,
+      camDist,
+      camTarget,
+      scene,
+    );
     camera.attachControl(true);
     return camera;
-}
-
-export default function createStartScene(engine) {
+  }
+  
+  export default function createStartScene(engine: Engine) {
     interface SceneData {
-        scene:Scene,
-        box?: Mesh,
-        light?: Light
-        sphere?: Mesh,
-        ground?: Mesh,
-        camera?:Camera
-    };
-
-    let that:SceneData = {scene:new Scene(engine)};
+      scene: Scene;
+      box?: Mesh;
+      light?: Light;
+      sphere?: Mesh;
+      ground?: Mesh;
+      camera?: Camera;
+    }
+  
+    let that: SceneData = { scene: new Scene(engine) };
     that.scene.debugLayer.show();
-
+  
     that.box = createBox(that.scene);
     that.light = createLight(that.scene);
     that.sphere = createSphere(that.scene);
     that.ground = createGround(that.scene);
     that.camera = createArcRotateCamera(that.scene);
     return that;
-}
+  }
 ```
 
 Now add the stylesheet file main.css inside babylonProj/src .
@@ -186,9 +209,13 @@ Check that the terminal prompt is now in the correct folder
 node ➜ /workspaces/babylonJSdev/babylonProj (main) $
 ```
 
-How install the files required by package.json in the project folder.
+Now install the files required by package.json in the project folder.
 
 >npm install
+
+To run the project on the vite development server:
+
+> npm run dev
 
 View in browser:
 
@@ -232,7 +259,7 @@ Passing back the objects with the scene is a pattern intended to make the object
 Note also that because the babylon framework has been imported it is no longer necessary to use the BABYLON keyword in lines such as
 
 ```javascript
- let box = MeshBuilder.CreateBox("box", scene);
+let box = MeshBuilder.CreateBox("box",{size: 1}, scene);
 ```
 
 Typescript demands stricter syntax than javaScript, that is one way in which it reduces errors.
@@ -240,26 +267,26 @@ Typescript demands stricter syntax than javaScript, that is one way in which it 
 You must ensure that all the elements added to the variable that are included in the interface.  If you decide to add a new shape that must be in the interface as well.  However the use of ? means optional so if you decide to remove the box the interface will not complain that it is missing.
 
 ```javascript
-export default function createStartScene(engine) {
+ export default function createStartScene(engine: Engine) {
     interface SceneData {
-        scene:Scene,
-        box?: Mesh,
-        light?: Light
-        sphere?: Mesh,
-        ground?: Mesh,
-        camera?:Camera
-    };
-
-    let that:SceneData = {scene:new Scene(engine)};
+      scene: Scene;
+      box?: Mesh;
+      light?: Light;
+      sphere?: Mesh;
+      ground?: Mesh;
+      camera?: Camera;
+    }
+  
+    let that: SceneData = { scene: new Scene(engine) };
     that.scene.debugLayer.show();
-
+  
     that.box = createBox(that.scene);
     that.light = createLight(that.scene);
     that.sphere = createSphere(that.scene);
     that.ground = createGround(that.scene);
     that.camera = createArcRotateCamera(that.scene);
     return that;
-}
+  }
 ```
 
 ## Building and deployment
@@ -336,7 +363,8 @@ Note that this is now running without a node environment as previewed below.
     scrolling="no" 
     title="Hello Page" 
     src="Block_3/section_1e_node/dist_1e/index.html" 
-    frameborder="no" 
+    style="border:10;border-style: solid;
+    border-color: red;"
     loading="lazy" 
     allowtransparency="true" 
     allowfullscreen="false">

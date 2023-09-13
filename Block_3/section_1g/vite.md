@@ -67,15 +67,16 @@ import { Scene, ArcRotateCamera, Vector3, HemisphericLight,
          MeshBuilder, 
          Mesh,
          Light, Color3,
-         Camera} from "@babylonjs/core";
+         Camera, 
+         Engine} from "@babylonjs/core";
 
-function createBox(scene){
-    let box = MeshBuilder.CreateBox("box", scene);
+function createBox(scene: Scene){
+    let box = MeshBuilder.CreateBox("box",{size: 1}, scene);
     box.position.y = 3;
     return box;
 }
     
-function createLight(scene){
+function createLight(scene: Scene){
     const light = new HemisphericLight("light", new Vector3(1, 1, 0),scene);
     light.intensity = 0.7;
     light.diffuse = new Color3(1, 0, 0);
@@ -84,18 +85,18 @@ function createLight(scene){
     return light;
 }
    
-function createSphere(scene){
+function createSphere(scene: Scene){
     let sphere = MeshBuilder.CreateSphere("sphere", { diameter: 2, segments: 32 }, scene);
     sphere.position.y = 1;
     return sphere;
 }
    
-function createGround(scene){
+function createGround(scene: Scene){
     let ground = MeshBuilder.CreateGround("ground", { width: 6, height: 6 }, scene);
     return ground;
 }
 
-function createArcRotateCamera(scene){
+function createArcRotateCamera(scene: Scene){
     let camAlpha = -Math.PI / 2,
     camBeta  =  Math.PI / 2.5,
     camDist  =  10,
@@ -105,7 +106,7 @@ function createArcRotateCamera(scene){
     return camera;
 }
 
-export default function createStartScene(engine) {
+export default function createStartScene(engine: Engine) {
     interface SceneData {
         scene:Scene,
         box?: Mesh,
@@ -141,7 +142,7 @@ As you are investigating how babylonJS works it is unlikely that you will want t
 
 Modify babylonProj/package.json adding new scripts directed at your lighting01 folder.
 
-```json
+```JSON
 {
   "name": "testproj",
   "private": true,
@@ -211,12 +212,13 @@ The files are now in the dist folder
 These can be copied using file explorer and deployed on any html server.
 
 <iframe 
-    height="600" 
+    height="480" 
     width="100%" 
     scrolling="no" 
     title="Coloured Hemispheric Light" 
     src="Block_3/section_1g/dist_1g/index.html" 
-    frameborder="no" 
+    style="border:10;border-style: solid;
+    border-color: red;"
     loading="lazy" 
     allowtransparency="true" 
     allowfullscreen="true">

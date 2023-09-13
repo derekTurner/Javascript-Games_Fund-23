@@ -166,7 +166,8 @@ The code now works fine.
     scrolling="no" 
     title="Refactored Basic Scene" 
     src="Block_3/section_1f/dist_1f/index.html" 
-    frameborder="no" 
+    style="border:10;border-style: solid;
+    border-color: red;" 
     loading="lazy" 
     allowtransparency="true" 
     allowfullscreen="true">
