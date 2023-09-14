@@ -9,6 +9,7 @@
 * [BabylonJS on Docker](Block_3/section_1e_node/firstBabylon.md)
 * [Changing Machine](Block_3/section_1f/change.md)
 *  [Managing Vite](Block_3/section_1g/vite.md)
+*  [Cloud development](Block_3/section_1h/cde.md)
 
 
 <hr/>
