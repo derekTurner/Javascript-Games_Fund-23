@@ -199,7 +199,7 @@ Which produces:
 
 ## Bulma
 
-A popular alternative to bootstrap is [Bulma](https://bulma.io/).
+A popular alternative to bootstrap is [Bulma](https://bulma.io/documentation/components/).
 
 Creating a basic layout:
 
