@@ -422,7 +422,7 @@ And finally it is running here!
     width="600" 
     scrolling="no" 
     title="BabylonJS developed on codeSandbox" 
-    src="Block_3/section_1h/dist/index.html" 
+    src="Block_3/section_1h/dist_1h/index.html" 
     style="border:10;border-style: solid;
     border-color: red;" 
     loading="lazy" 
