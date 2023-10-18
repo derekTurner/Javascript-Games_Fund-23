@@ -2,9 +2,9 @@
 
 You can keep the test project folder later reference.  Never copy the node modules, they are easily restored when needed.
 
-Create a new folder named babylonProj in the babylonJSdev folder.
+* Create a new folder named babylonProj in the babylonJSdev folder.
 
-Copy the files .gitignore, package-lock.json and package.json from testProj into babylonProj
+* Copy the files .gitignore, package-lock.json and package.json from testProj into babylonProj
 
 
 Add the following file named tsconfig.json to babylonProj
@@ -74,7 +74,7 @@ canvas.id = CanvasName;
 canvas.classList.add("background-canvas");
 document.body.appendChild(canvas);
 
-let eng = new Engine(canvas, true, null, true);
+let eng = new Engine(canvas, true, {}, true);
 let startScene = createStartScene(eng);
 eng.runRenderLoop(() => {
     startScene.scene.render();
@@ -197,7 +197,7 @@ No files should be highligted in red and no lines should be underlined in red.  
 
 Now to run this project, change the directory that the terminal is addressing:
 
-Click on th folder babylonProj and "open in integrated terminal".
+Click on the folder babylonProj and "open in integrated terminal".
 
 This is done rather than cd into the folder so that any installation will be separate from the parent folder.  However the node modules from the parent folder are known to the system and so installations will not be duplicated.
 
@@ -237,7 +237,9 @@ If you see these errors.  Close and destroy the container and restart the PC.
 
 ### Comments on operation
 
-Note that the scene still works if the individual objects are not passed back with the scene.  So for instance editing createStartScene.ts to remove lines will still work.
+Note that the function returns a variable of type SceneData which contains the scene and the individual scene elements.  That is to make these scene elements available for manipulation more easily in the module importing this one.
+
+However,  the scene still works if the individual objects are not passed back with the scene.  So for instance editing createStartScene.ts to remove the comented lines and add the shorter lines will still work.
 
 ```javascript
     //that.box = createBox(that.scene);

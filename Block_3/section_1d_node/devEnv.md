@@ -113,7 +113,7 @@ The node version can be checked by
 >node -v
 
 ```code
-v20.3.1
+v20.8.0
 ```
 
 The typescript version is checked by:
@@ -121,7 +121,7 @@ The typescript version is checked by:
 >tsc -v
 
 ```code
-Version 5.1.6
+Version 5.2.2
 ```
 
 Install vite with
@@ -133,21 +133,23 @@ This led to a comment inviting an update to npm.
 ```
 3 packages are looking for funding
   run `npm fund` for details
+
+found 0 vulnerabilities
 npm notice 
-npm notice New minor version of npm available! 9.6.7 -> 9.8.0
-npm notice Changelog: https://github.com/npm/cli/releases/tag/v9.8.0
-npm notice Run npm install -g npm@9.8.0 to update!
-npm notice
+npm notice New major version of npm available! 9.8.1 -> 10.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v10.2.1
+npm notice Run npm install -g npm@10.2.1 to update!
+npm notice 
 ```
 
 Folllow any advice to update.
 
-> npm install -g npm@9.8.0
+> npm install -g npm@10.2.1
 
 ```
-added 1 package in 2s
+added 1 package in 4s
 
-28 packages are looking for funding
+29 packages are looking for funding
   run `npm fund` for details
 ```
 
@@ -355,7 +357,7 @@ found 0 vulnerabilities
 This includes a div with id as 'app' where the javascript will generate output determined by running the typescript file main.ts.
 
 **main.ts**
-```ts
+```javascript
 import './style.css'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
@@ -393,7 +395,7 @@ The button is read from the DOM usint the [querySelector](https://www.w3schools.
 The counter.ts is a module which exports a single named function.
 
 **counter.ts**
-```ts
+```javascript
 export function setupCounter(element: HTMLButtonElement) {
   let counter = 0
   const setCounter = (count: number) => {

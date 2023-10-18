@@ -403,7 +403,7 @@ Docker
 
 ![docker extension](dockerExtension.png)
 
-Remote containers
+Dev containers: a plug in which incorporates 4 other plug ins for all remote container connections.
 
 ![remote containers](remoteContainers.png)
 
