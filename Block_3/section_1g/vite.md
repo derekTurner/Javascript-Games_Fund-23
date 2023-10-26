@@ -29,23 +29,30 @@ Into this folder (whilst running in the container) the code from the babylonProg
 The only file edited here is createStartScene.ts just adding Color3 to the list of imports
 
 ```javaScript
-import { Scene, ArcRotateCamera, Vector3, HemisphericLight,
-         MeshBuilder,
-         Mesh,
-         Light, Color3,
-         Camera} from "@babylonjs/core";
+import {
+  Scene,
+  ArcRotateCamera,
+  Vector3,
+  HemisphericLight,
+  MeshBuilder,
+  Mesh,
+  Light,
+  Color3,
+  Camera,
+  Engine,
+} from "@babylonjs/core";
 ```
 
 and then mpdifying the properties of the hemispheric light.
 
 ```javascript
-function createLight(scene) {
-    const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
-    light.intensity = 0.7;
-    light.diffuse = new Color3(1, 0, 0);
-    light.specular = new Color3(0, 1, 0);
-    light.groundColor = new Color3(0, 1, 0);
-    return light;
+function createLight(scene: Scene) {
+  const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
+  light.intensity = 0.7;
+  light.diffuse = new Color3(1, 0, 0);
+  light.specular = new Color3(0, 1, 0);
+  light.groundColor = new Color3(0, 1, 0);
+  return light;
 }
 ```
 
@@ -56,6 +63,33 @@ The `diffuse` colour represents the colour (r,g,b) wich the light casts on objec
 The `specular` colour is the colour reflected from shiny surfaces, so appears as a small point on the sphere.
 
 The `groundColour` is a feature only of the Hemispheric light and represents a contrast colour from the opposite direction from the light, as if from the ground.
+
+Now start to add functions to create meshes to add the scene.
+
+```javascript
+function createBox(scene: Scene) {
+  let box = MeshBuilder.CreateBox("box", { size: 1 }, scene);
+  box.position.y = 3;
+  return box;
+}
+```
+This function will return a box in a fixed position.  You could add parameters to the function if you wanted to make it more versatile.
+
+Add a sphere function.
+
+```javascript
+function createSphere(scene: Scene) {
+  let sphere = MeshBuilder.CreateSphere(
+    "sphere",
+    { diameter: 2, segments: 32 },
+    scene
+  );
+  sphere.position.y = 1;
+  return sphere;
+}
+```
+
+
 
 The full listing is:
 
