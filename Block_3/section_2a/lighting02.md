@@ -249,3 +249,17 @@ The resulting scene will then appear in the browser.
 
 ![scene](images/scene.png)
 
+And finally it is running here!
+
+<iframe 
+    height="480" 
+    width="600" 
+    scrolling="no" 
+    title="Lighting and Shadow" 
+    src="Block_3/section_2a/dist/index.html" 
+    style="border:10;border-style: solid;
+    border-color: red;" 
+    loading="lazy" 
+    allowtransparency="true" 
+    allowfullscreen="true">
+</iframe>

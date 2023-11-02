@@ -562,3 +562,18 @@ export default function createRunScene(runScene: SceneData) {
 
 Move the camera around to get the best view of the moving scene.
 
+And finally it is running here!
+
+<iframe 
+    height="480" 
+    width="600" 
+    scrolling="no" 
+    title="Rotation" 
+    src="Block_3/section_2b/dist/index.html" 
+    style="border:10;border-style: solid;
+    border-color: red;" 
+    loading="lazy" 
+    allowtransparency="true" 
+    allowfullscreen="true">
+</iframe>
+
