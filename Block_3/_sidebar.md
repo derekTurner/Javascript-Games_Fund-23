@@ -8,8 +8,10 @@
 * [Typescript , Vite and Deno on Docker](Block_3/section_1d_node/devEnv.md)
 * [BabylonJS on Docker](Block_3/section_1e_node/firstBabylon.md)
 * [Changing Machine](Block_3/section_1f/change.md)
-*  [Managing Vite](Block_3/section_1g/vite.md)
-*  [Cloud development](Block_3/section_1h/cde.md)
+* [Managing Vite](Block_3/section_1g/vite.md)
+* [Cloud development](Block_3/section_1h/cde.md)
+* [Lighting and Shadows](Block_3/section_2a/lighting02.md)
+* [Rotation](Block_3/section_2b/rotation.md)
 
 
 <hr/>
