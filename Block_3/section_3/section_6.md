@@ -6,7 +6,7 @@ The general process to create an amimation is:
 
 1. Determine a frame rate in frames per second at which the animation should run.  In many instances this will be global so that all animations on a page are running at the same rate.  However, this is not a requirement.
 
-2. Create an named animation object w.hich applies to a particular property, setting the type and mode of the animation.
+2. Create an named animation object which applies to a particular property, setting the type and mode of the animation.
 
 3. Create an array of keyframes and apply these to the animation object.
 
