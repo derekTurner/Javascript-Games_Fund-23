@@ -200,15 +200,21 @@ up to date, audited 26 packages in 3s
 
 found 0 vulnerabilities
 ```
+
+Finally add the Havok physics engine which is newly introduced to Babylon Version 6 required to handle meshes.
+
+>npm i -D @babylonjs/havok
+
 When these are completed the package.json file will have been modified to show the babylon elements as devDependencies because of the -D flag used on installation.
 
-```json
+```JSON
 {
   "dependencies": {
     "vite": "^4.4.4"
   },
   "devDependencies": {
     "@babylonjs/core": "^6.12.5",
+    "@babylonjs/havok": "^1.2.1",
     "@babylonjs/inspector": "^6.12.5",
     "@babylonjs/loaders": "^6.12.5"
   }
