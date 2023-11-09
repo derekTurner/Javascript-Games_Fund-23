@@ -12,62 +12,333 @@ The general process to create an amimation is:
 
 4. Push the animation object to the animations collection of mesh or object which responds to the animated property
 
-## Animating position.x
 
-My scenes are created in a series of separate javascript module files starting at **createScenen.js**.  
+## File structure
+
+This scene is formed in a folder named frame01 and consists of files and modules:
+
+   |    File |  Useage  |
+   |:-----|:-------|
+  |createStartScene.js |Defining the shapes placed in the scene|
+  |createRunScene.js  | Controlling the manipulation of the scene  |
+  | index.ts| Initialize and render the scene|
+  | interface.d.ts|Describe the scene elements to share between files |
+  |animations.ts |module containing frame based animation functions |
+
+  The folder structure is:
+
+  ![structure](images/structure.png)
+ 
 
 In this example a box will be animated with a framerate of 30 frames per second.
 
-Each element in the scene is created by calling a function, so createBox(scene) will return a simple cube.
+The box is described in createStartScene.ts as:
 
 ```javascript
-const frameRate = 30;
-
-function createBox(scene) {
-    const box = BABYLON.MeshBuilder.CreateBox("box", {});
-    box.position.x = 2;
-    return box;
+function createBox(scene: Scene) {
+  let box = MeshBuilder.CreateBox("box",{}, scene);
+  let boxMaterial = new StandardMaterial("texture1", scene);
+  box.material = boxMaterial;
+  box.position.y = 3;
+  box.position.y = 0.51;
+  return box;
 }
 ```
 
-The animation is also created in a function.
-This first animation is named xSlide and can be applied to control the position.x property of any any element which has this property, such as a standard mesh.
+This differs from the previous examples of box by the addition of a standard material so that the box can accept colors, to be used later.
 
-The frameRate is passed into the function so that this is a pure function (the returned value depends only on the input parameters).
+Otherwise the sceme is similar to previous lighting examples.
 
+The full listing is:
+
+**createStartScene.ts**
 ```javascript
-function createxSlide(frameRate){
+import { SceneData } from "./interfaces ";
+
+import {
+  Scene,
+  ArcRotateCamera,
+  Vector3,
+  MeshBuilder,
+  Mesh,
+  StandardMaterial,
+  HemisphericLight,
+  PointLight,
+  SpotLight,
+  DirectionalLight,
+  Color3,
+  ShadowGenerator,
+  Engine,
+} from "@babylonjs/core";
+
+function createBox(scene: Scene) {
+  let box = MeshBuilder.CreateBox("box",{}, scene);
+  let boxMaterial = new StandardMaterial("texture1", scene);
+  box.material = boxMaterial;
+  box.position.y = 3;
+  box.position.y = 0.51;
+  return box;
+}
+
+function createPointLight(scene: Scene) {
+  const light = new PointLight("light", new Vector3(-1, 1, 0), scene);
+  light.position = new Vector3(5, 20, 10);
+  light.intensity = 0.3;
+  light.diffuse = new Color3(0.5, 1, 1);
+  light.specular = new Color3(0.8, 1, 1);
+  return light;
+}
+
+function createDirectionalLight(scene: Scene) {
+  const light = new DirectionalLight("light", new Vector3(0.2, -1, 0.2), scene);
+  light.position = new Vector3(20, 40, 20);
+  light.intensity = 0.7;
+  light.diffuse = new Color3(1, 0, 0);
+  light.specular = new Color3(0, 1, 0);
+  return light;
+}
+
+function createSpotLight(scene: Scene) {
+  const light = new SpotLight(
+    "light",
+    new Vector3(1, 5, -3),
+    new Vector3(0, -1, 0),
+    Math.PI / 3,
+    20,
+    scene
+  );
+  light.intensity = 0.7;
+  light.diffuse = new Color3(1, 0, 0);
+  light.specular = new Color3(0, 1, 0);
+  return light;
+}
+
+function createHemisphericLight(scene: Scene) {
+  const light: HemisphericLight = new HemisphericLight(
+    "light",
+    new Vector3(1, 10, 0),
+    scene
+  );
+  light.intensity = 0.3;
+  light.diffuse = new Color3(1, 0, 0);
+  light.specular = new Color3(0, 1, 0);
+  light.groundColor = new Color3(0, 1, 0);
+  return light;
+}
+
+function createShadows(light: DirectionalLight, sphere: Mesh, box: Mesh) {
+  const shadower = new ShadowGenerator(1024, light);
+  const shadowmap: any = shadower.getShadowMap();
+  shadowmap.renderList.push(sphere, box);
+
+  shadower.setDarkness(0.2);
+  shadower.useBlurExponentialShadowMap = true;
+  shadower.blurScale = 4;
+  shadower.blurBoxOffset = 1;
+  shadower.useKernelBlur = true;
+  shadower.blurKernel = 64;
+  shadower.bias = 0;
+  return shadower;
+}
+
+function createSphere(scene: Scene) {
+  let sphere = MeshBuilder.CreateSphere(
+    "sphere",
+    { diameter: 2, segments: 32 },
+    scene
+  );
+  sphere.position.y = 1.5;
+  return sphere;
+}
+
+function createGround(scene: Scene) {
+  let ground = MeshBuilder.CreateGround(
+    "ground",
+    { width: 6, height: 6 },
+    scene
+  );
+  var groundMaterial = new StandardMaterial("groundMaterial", scene);
+  groundMaterial.backFaceCulling = false;
+  ground.material = groundMaterial;
+  ground.receiveShadows = true;
+  return ground;
+}
+
+function createArcRotateCamera(scene: Scene) {
+  let camAlpha = -Math.PI / 2,
+    camBeta = Math.PI / 2.5,
+    camDist = 10,
+    camTarget = new Vector3(0, 0, 0);
+  let camera = new ArcRotateCamera(
+    "camera1",
+    camAlpha,
+    camBeta,
+    camDist,
+    camTarget,
+    scene
+  );
+  camera.attachControl(true);
+  return camera;
+}
+
+export default function createStartScene(engine: Engine) {
+  let scene = new Scene(engine);
+  let box = createBox(scene);
+  let lightBulb = createPointLight(scene);
+  let lightDirectional = createDirectionalLight(scene);
+  let lightSpot = createSpotLight(scene);
+  let lightHemispheric = createHemisphericLight(scene);
+  let sphere = createSphere(scene);
+  let ground = createGround(scene);
+  let camera = createArcRotateCamera(scene);
+  let shadowGenerator = createShadows(lightDirectional, sphere, box);
+
+  let that: SceneData = {
+    scene,
+    box,
+    lightBulb,
+    lightDirectional,
+    lightSpot,
+    lightHemispheric,
+    sphere,
+    ground,
+    camera,
+    shadowGenerator,
+  };
+  return that;
+}
+
 ```
 
-The type and mode of the animation are selected from:
+Each element in the scene is created by calling a function and these elements are then added to the data structure SceneData.
+
+The SceneData interface is defined in interfaces.d.ts so that other module files can access the elements of the scene.
+
+The full listing is:
+
+**interfaces.d.ts**
+```javascript
+import {
+  Scene,
+  Mesh,
+  HemisphericLight,
+  PointLight,
+  SpotLight,
+  DirectionalLight,
+  Camera,
+  ShadowGenerator,
+} from "@babylonjs/core";
+
+export interface SceneData {
+  scene: Scene;
+  box: Mesh;
+  lightBulb: PointLight;
+  lightDirectional?: DirectionalLight;
+  lightSpot: SpotLight;
+  lightHemispheric: HemisphericLight;
+  sphere: Mesh;
+  ground: Mesh;
+  camera: Camera;
+  shadowGenerator: ShadowGenerator;
+}
+```
+
+
+The interface and Scene data content must match exactly.
+
+The animations.ts file will be used to keep the animations separate from the scene code.  Breaking the code into appropriate small modules helps with readability and makes it easier to reuse code.
+
+Code in animations.ts will take care of the first three steps of the process:
+
+1. Determine a frame rate in frames per second at which the animation should run.  In many instances this will be global so that all animations on a page are running at the same rate.  However, this is not a requirement.
+
+2. Create an named animation object which applies to a particular property, setting the type and mode of the animation.
+
+3. Create an array of keyframes and apply these to the animation object.
+
+The scene details are manipulated in createRunScene.ts
+
+In this case the file will be relatively short, just taking care of the last step:
+
+4. Push the animation object to the animations collection of mesh or object which responds to the animated property
+
+The animations are applied to the box here and can be switched on and off simply by commenting out lines.
+
+You might try editing the files to add selected animations to the sphere.
+
+## Animating position.x
+
+The animation is defined as an exported function in animations.ts
+
+At the top of the file the required babylon resources are imported and interfaces are defined so that apropriate types can be added to the keyframe arrays which will be defined.
+
+**animations.ts**
+```javascript
+import { Animation, Color3, Vector3 } from "@babylonjs/core";
+
+interface PositionArray {
+    frame: number;
+    value: number;
+}
+
+interface ScaleArray {
+    frame: number;
+    value: Vector3;
+}
+
+interface colorArray {
+    frame: number;
+    value: Color3;
+}
+
+export const frameRate = 30;
+```
+
+This first animation is named xSlide and can be applied to control the position.x property of any any element which has this position property, such as a standard mesh.
+
+The frameRate is also defined here and exported for use throughout the application.
+
+
+The type and mode of the animation available are selected from:
 
     Types
-    BABYLON.Animation.ANIMATIONTYPE_FLOAT
-    BABYLON.Animation.ANIMATIONTYPE_VECTOR2
-    BABYLON.Animation.ANIMATIONTYPE_VECTOR3
-    BABYLON.Animation.ANIMATIONTYPE_QUATERNION
-    BABYLON.Animation.ANIMATIONTYPE_COLOR3
+    Animation.ANIMATIONTYPE_FLOAT
+    Animation.ANIMATIONTYPE_VECTOR2
+    Animation.ANIMATIONTYPE_VECTOR3
+    Animation.ANIMATIONTYPE_QUATERNION
+    Animation.ANIMATIONTYPE_COLOR3
 
     Modes
-    BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE
-    BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-    BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+    Animation.ANIMATIONLOOPMODE_RELATIVE
+    Animation.ANIMATIONLOOPMODE_CYCLE
+    Animation.ANIMATIONLOOPMODE_CONSTANT
 
+To move an object around in the x direction a function named xSlide is defined.
+
+**animations.ts**
 ```javascript
-    const xSlide = new BABYLON.Animation(
+export function createxSlide(frameRate: number){
+    const xSlide = new Animation(
         "xSlide",
         "position.x",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_FLOAT,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
+
+ 
 ```
+
+
 
 An array of keyframes is created and the frame number and value for each key frame is pushed into this array.     
 
 The values of the keyframes (particularly the last one) need to be selected with care to prevent a jerky glitch on each repeat of the animation.
 
 Here the framerate is 30 so for a 2 second animation duration 59 frames need to be described and then the 60th frame wraps round to the first frame.
+
+
+
 
 In this example the value starts at 2 at the first frame and by frame 30 it has changed to -2.  The relative motion was -4, so to return to the origin the return motion is +4.
 
@@ -76,15 +347,15 @@ However only 29 further frames are described so the value will not quite have th
 This is expressed in the equation below and demonstrates that cyclical motion needs careful planning!
 
 ```javascript
-    const keyFramesX = [];
+   const keyFramesX: PositionArray[] = [];
     keyFramesX.push({ frame: 0, value: 2 });
     keyFramesX.push({ frame: frameRate, value: -2 });
     keyFramesX.push({ frame: (2 * frameRate)-1, value: (-2 + (4 * ( frameRate /2) / ((frameRate/2) -1))) });
-
-}
 ```
 
-The key frames array is then associated with the animation that it relates to.  
+
+
+The key frames array is then associated with the animation that it relates to using the setKeys() function.  
 
 ```javascript
     xSlide.setKeys(keyFramesX);
@@ -101,42 +372,49 @@ Finally the animation is returned by the creating function
 The full function is then:
 
 ```javascript
-function createxSlide(frameRate){
-    const xSlide = new BABYLON.Animation(
+export function createxSlide(frameRate: number){
+    const xSlide = new Animation(
         "xSlide",
         "position.x",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_FLOAT,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesX = [];
+    const keyFramesX: PositionArray[] = [];
     keyFramesX.push({ frame: 0, value: 2 });
     keyFramesX.push({ frame: frameRate, value: -2 });
     keyFramesX.push({ frame: (2 * frameRate)-1, value: (-2 + (4 * ( frameRate /2) / ((frameRate/2) -1))) });
 
     xSlide.setKeys(keyFramesX);
-
     return xSlide
 }
 ```
 
-The whole scene is put together in a function createStartScene(engine) which is exported from the module.
 
-Within this function the box is created in the scene and the animation returned by createxSlide is pushed into the animations collection of the box.
+Now in createRunScene.ts the required resources are imported and the  animation xslide is pushed to the box mesh.
 
-```javascript
-    let box = (that.box = createBox(scene));
-    box.animations.push(createxSlide(frameRate));
-```
-
-The animation on the box is started.
+Finally the animation on the bos is started with beginAnimation().
 
 ```javascript
-    that.scene.beginAnimation(box, 0, 2 * frameRate, true); 
+import { SceneData } from "./interfaces ";
+
+import { createxSlide, createySlide, createxRotate, createyRotate, createV3scaling,  createColorShift, frameRate } from "./animations";
+
+
+export default function createRunScene(runScene: SceneData) {
+  runScene.sphere.position.y = -2;    
+
+  runScene.box.animations.push(createxSlide(frameRate));
+  runScene.scene.beginAnimation(runScene.box, 0, 2 * frameRate, true);
+}                                   
 ```
 
-The resulting animation in the x direction is shown in scene 1 of this example.
+Note that the position of the sphere is also altered, this is simply to clear a path for the box animations to be viewed withous collision.
+
+
+
+The resulting animation in the x direction is shown here.
 
 <iframe 
     height="460" 
