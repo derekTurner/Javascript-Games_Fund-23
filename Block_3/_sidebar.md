@@ -13,6 +13,7 @@
 * [Lighting and Shadows](Block_3/section_2a/lighting02.md)
 * [Rotation](Block_3/section_2b/rotation.md)
 * [Frame Animation](Block_3/section_3/frames01.md)
+* [Shapes](Block_3/section_4/shapes01.md)
 
 
 <hr/>
