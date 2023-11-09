@@ -421,94 +421,33 @@ The resulting animation in the x direction is shown here.
     width="100%" 
     scrolling="no" 
     title="frame animaations" 
-    src="Block_3/section_6/ex_01_animation/index.html" 
+    src="Block_3/section_3/dist01/index.html" 
     frameborder="no" 
     loading="lazy" 
     allowtransparency="true" 
     allowfullscreen="true">
 </iframe>
 
-The full listing of the scene is:
 
-**createScene1.js**
-```javascript
-const frameRate = 30;
-
-function createBox(scene) {
-    const box = BABYLON.MeshBuilder.CreateBox("box", {});
-    box.position.x = 2;
-    return box;
-}
-
-function createxSlide(frameRate){
-    const xSlide = new BABYLON.Animation(
-        "xSlide",
-        "position.x",
-        frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-    );
-
-    const keyFramesX = [];
-    keyFramesX.push({ frame: 0, value: 2 });
-    keyFramesX.push({ frame: frameRate, value: -2 });
-    keyFramesX.push({ frame: (2 * frameRate)-1, value: (-2 + (4 * ( frameRate /2) / ((frameRate/2) -1))) });
-
-    xSlide.setKeys(keyFramesX);
-
-    return xSlide
-}
-
-function createLight(scene) {
-    const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
-    light.intensity = 0.7;
-    return light;
-}
-
-function createArcRotateCamera(scene) {
-    let camAlpha = -Math.PI / 2;
-    let camBeta = Math.PI / 2.5;
-    let camDist = 10;
-    let camTarget = new BABYLON.Vector3(0, 0, 0);
-    let camera = new BABYLON.ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
-    camera.attachControl(true);
-    return camera;
-}
-
-export default function createStartScene(engine) {
-    let that = {};
-    let scene = (that.scene = new BABYLON.Scene(engine));
-    //scene.debugLayer.show();
-
-    let box = (that.box = createBox(scene));
-    box.animations.push(createxSlide(frameRate));
-
-    let light = (that.light = createLight(scene));
-    let camera = (that.camera = createArcRotateCamera(scene));
-
-    that.scene.beginAnimation(box, 0, 2 * frameRate, true);
-    return that;
-}
-```
 ## Animating position.y
-
-In the following examples I have been less pernickerty about the animation values so there may be a repeat glitch - I leave it as an exercise for you to fix this!
 
 Creating an animation on the y position is a matter of adding a function createySlide to animate position.y following the same pattern as that for the previous animation of position.x
 
 ```javascript
-function createySlide(frameRate){
-    const ySlide = new BABYLON.Animation(
+export function createySlide(frameRate: number){
+    const ySlide = new Animation(
         "ySlide",
         "position.y",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_FLOAT,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesY = [];
+    const keyFramesY: PositionArray[] = [];
     keyFramesY.push({ frame: 0, value: 2 });
-    keyFramesY.push({ frame: frameRate, value: -2 });
+    keyFramesY.push({ frame: frameRate / 2, value: 1 });
+    keyFramesY.push({ frame: frameRate, value: 2 });
+    keyFramesY.push({ frame: frameRate* 3 / 2, value: 4 });
     keyFramesY.push({ frame: 2 * frameRate, value: 2 });
 
     ySlide.setKeys(keyFramesY);
@@ -517,43 +456,46 @@ function createySlide(frameRate){
 }
 ```
 
-The extra animation is added to the box in the createStartScene(engine)  function.
+The extra animation is added to the box in the createRunScene.ts file.
 
 ```javascript
-export default function createStartScene(engine) {
-    let that = {};
-    let scene = (that.scene = new BABYLON.Scene(engine));
-    //scene.debugLayer.show();
+export default function createRunScene(runScene: SceneData) {
+  runScene.sphere.position.y = -2;  
 
-    let box = (that.box = createBox(scene));
-    box.animations.push(createxSlide(frameRate));
-    box.animations.push(createySlide(frameRate));
-
-    let light = (that.light = createLight(scene));
-    let camera = (that.camera = createArcRotateCamera(scene));
-
-    that.scene.beginAnimation(box, 0, 2 * frameRate, true);
-    return that;
-}
+  runScene.box.animations.push(createySlide(frameRate));
+  runScene.scene.beginAnimation(runScene.box, 0, 2 * frameRate, true);
+}  
 ```
 
-The combined x and y animation is shown on tab 2 of the example.
+The y animation is shown here.
+
+<iframe 
+    height="460" 
+    width="100%" 
+    scrolling="no" 
+    title="frame animaations" 
+    src="Block_3/section_3/dist02/index.html" 
+    frameborder="no" 
+    loading="lazy" 
+    allowtransparency="true" 
+    allowfullscreen="true">
+</iframe>
 
 ## Animating rotation
 
 A function is provided to create rotation around the x axis.  Note that the rotation values are expressed as radians.
 
 ```javascript
-function createxRotate(frameRate){
-    const xRotation = new BABYLON.Animation(
+export function createxRotate(frameRate: number){
+    const xRotation = new Animation(
         "xRotation",
         "rotation.x",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_FLOAT,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesRX = [];
+    const keyFramesRX: PositionArray[]= [];
     keyFramesRX.push({ frame: 0, value: 0 });
     keyFramesRX.push({ frame: frameRate, value: Math.PI });
     keyFramesRX.push({ frame: 2 * frameRate, value: Math.PI * 2 });
@@ -564,29 +506,55 @@ function createxRotate(frameRate){
 }
 ```
 
-A similarly patterned function provides rotation about the y axis.  Both of these are added to the createStartSene(engine)
+A similarly patterned function provides rotation about the y axis. 
+
+```javascript
+export function createyRotate(frameRate: number){
+    const yRotation = new Animation(
+        "yRotation",
+        "rotation.y",
+        frameRate,
+        Animation.ANIMATIONTYPE_FLOAT,
+        Animation.ANIMATIONLOOPMODE_CYCLE
+    );
+
+    const keyFramesRY: PositionArray[]= [];
+    keyFramesRY.push({ frame: 0, value: 0 });
+    keyFramesRY.push({ frame: frameRate, value: Math.PI });
+    keyFramesRY.push({ frame: 2 * frameRate, value: Math.PI * 2 });
+
+    yRotation.setKeys(keyFramesRY);
+
+    return yRotation
+}
+```
+
+
+ Both of these are added to the createRunScene()
  function.
 
 ```javascript
-export default function createStartScene(engine) {
-    let that = {};
-    let scene = (that.scene = new BABYLON.Scene(engine));
-    //scene.debugLayer.show();
+export default function createRunScene(runScene: SceneData) {
+  runScene.sphere.position.y = -2;    
 
-    let box = (that.box = createBox(scene));
-    box.animations.push(createxSlide(frameRate));
-    box.animations.push(createySlide(frameRate));
-    box.animations.push(createxRotate(frameRate));
-    box.animations.push(createyRotate(frameRate));
-
-    let light = (that.light = createLight(scene));
-    let camera = (that.camera = createArcRotateCamera(scene));
-
-    that.scene.beginAnimation(box, 0, 2 * frameRate, true);
-    return that;
-}
+  runScene.box.animations.push(createxRotate(frameRate));
+  runScene.box.animations.push(createyRotate(frameRate));
+  runScene.scene.beginAnimation(runScene.box, 0, 2 * frameRate, true);
+}     
 ```
-The combined motion and rotation can be seen under example tab 3.
+The combined motion and rotation can be seen here.
+
+<iframe 
+    height="460" 
+    width="100%" 
+    scrolling="no" 
+    title="frame animaations" 
+    src="Block_3/section_3/dist03/index.html" 
+    frameborder="no" 
+    loading="lazy" 
+    allowtransparency="true" 
+    allowfullscreen="true">
+</iframe>
 
 ## Animating scale
 
@@ -595,20 +563,20 @@ So far the animations used have  had an animation type of float.  It iss also po
 The keyframes are now expressed as vector3 quantities.
 
 ```javascript
-function createV3scaling(frameRate) {
-    const v3scaling = new BABYLON.Animation(
+export function createV3scaling(frameRate: number) {
+    const v3scaling = new Animation(
         "v3Scaling",
         "scaling",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_VECTOR3,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesv3s = [];
-    keyFramesv3s.push({ frame: 0, value: new BABYLON.Vector3(1, 2, 3) }),
-    keyFramesv3s.push({ frame: 0.66 * frameRate, value: new BABYLON.Vector3(2, 3, 1) });
-    keyFramesv3s.push({ frame: 1.32 * frameRate, value: new BABYLON.Vector3(3, 1, 2) });
-    keyFramesv3s.push({ frame: 2 * frameRate, value: new BABYLON.Vector3(1, 2, 3) });
+    const keyFramesv3s: ScaleArray[] = [];
+    keyFramesv3s.push({ frame: 0, value: new Vector3(1, 2, 3) }),
+    keyFramesv3s.push({ frame: 0.66 * frameRate, value: new Vector3(2, 3, 1) });
+    keyFramesv3s.push({ frame: 1.32 * frameRate, value: new Vector3(3, 1, 2) });
+    keyFramesv3s.push({ frame: 2 * frameRate, value: new Vector3(1, 2, 3) });
 
     v3scaling.setKeys(keyFramesv3s);
 
@@ -616,19 +584,43 @@ function createV3scaling(frameRate) {
 }
 ```
 
-Adding this animation to the others will produce a shape change in example tab 4.
+This is then added to the createRunScene function.
+
+```javascript
+export default function createRunScene(runScene: SceneData) {
+  runScene.sphere.position.y = -2;    
+
+  runScene.box.animations.push(createV3scaling(frameRate));
+  runScene.scene.beginAnimation(runScene.box, 0, 2 * frameRate, true);
+}  
+```
+
+The animated scaling is shown here.
+
+<iframe 
+    height="460" 
+    width="100%" 
+    scrolling="no" 
+    title="frame animaations" 
+    src="Block_3/section_3/dist04/index.html" 
+    frameborder="no" 
+    loading="lazy" 
+    allowtransparency="true" 
+    allowfullscreen="true">
+</iframe>
 
 ## Animating Color
 
 Color is not a property of a mesh, but of a material.  So to see color a material must be added to the box.  In this case standard material is used.
 
 ```javascript
-function createBox(scene) {
-    const box = BABYLON.MeshBuilder.CreateBox("box", {});
-    var materialBox = new BABYLON.StandardMaterial("texture1", scene);
-    box.material = materialBox;
-    box.position.x = 2;
-    return box;
+function createBox(scene: Scene) {
+  let box = MeshBuilder.CreateBox("box",{}, scene);
+  let boxMaterial = new StandardMaterial("texture1", scene);
+  box.material = boxMaterial;
+  box.position.y = 3;
+  box.position.y = 0.51;
+  return box;
 }
 ```
 
@@ -637,20 +629,20 @@ Material does not have a color property but a range of color properties: diffuse
 In this example the color animation is applied to the diffuse color of the material.
 
 ```javascript
-function createColorShift(frameRate) {
-    const colorShift = new BABYLON.Animation(
+export function createColorShift(frameRate: number) {
+    const colorShift = new Animation(
         "color3",
         "material.diffuseColor",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_COLOR3,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_COLOR3,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesC3 = [];
-    keyFramesC3.push({ frame: 0, value: new BABYLON.Color3(1, 0.5, 0.2) }),
-    keyFramesC3.push({ frame: 0.66 * frameRate, value: new BABYLON.Color3(0.5, 0.2, 1) });
-    keyFramesC3.push({ frame: 1.32 * frameRate, value: new BABYLON.Color3(0.2, 1, 0.5) });
-    keyFramesC3.push({ frame: 2 * frameRate, value: new BABYLON.Color3(1, 0.5, 0.2) });
+    const keyFramesC3: colorArray [] = [];
+    keyFramesC3.push({ frame: 0, value: new Color3(1, 0.5, 0.2) }),
+    keyFramesC3.push({ frame: 0.66 * frameRate, value: new Color3(0.5, 0.2, 1) });
+    keyFramesC3.push({ frame: 1.32 * frameRate, value: new Color3(0.2, 1, 0.5) });
+    keyFramesC3.push({ frame: 2 * frameRate, value: new Color3(1, 0.5, 0.2) });
 
    colorShift.setKeys(keyFramesC3);
 
@@ -658,171 +650,200 @@ function createColorShift(frameRate) {
 }
 ```
 
-This is added to the list of animations in tab 5 of the example.
+This can be added to createRunScene.ts.
+
+<iframe 
+    height="460" 
+    width="100%" 
+    scrolling="no" 
+    title="frame animaations" 
+    src="Block_3/section_3/dist05/index.html" 
+    frameborder="no" 
+    loading="lazy" 
+    allowtransparency="true" 
+    allowfullscreen="true">
+</iframe>
+
+## Combined animations
+
+All the listed animations can be applied to the box or any other mesh in the scene at the same time to produce a combined effect.
+
+
 
 The full listing of the scene with all animations described is:
 
-**createScene5.js**
+**animations.ts**
 ```javascript
-const frameRate = 30;
+import { Animation, Color3, Vector3 } from "@babylonjs/core";
 
-function createBox(scene) {
-    const box = BABYLON.MeshBuilder.CreateBox("box", {});
-    var materialBox = new BABYLON.StandardMaterial("texture1", scene);
-    box.material = materialBox;
-    box.position.x = 2;
-    return box;
+interface PositionArray {
+    frame: number;
+    value: number;
 }
 
-function createxSlide(frameRate) {
-    const xSlide = new BABYLON.Animation(
+interface ScaleArray {
+    frame: number;
+    value: Vector3;
+}
+
+interface colorArray {
+    frame: number;
+    value: Color3;
+}
+
+export const frameRate = 30;
+
+export function createxSlide(frameRate: number){
+    const xSlide = new Animation(
         "xSlide",
         "position.x",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_FLOAT,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesX = [];
+    const keyFramesX: PositionArray[] = [];
     keyFramesX.push({ frame: 0, value: 2 });
     keyFramesX.push({ frame: frameRate, value: -2 });
-    keyFramesX.push({ frame: 2 * frameRate, value: 2 });
+    keyFramesX.push({ frame: (2 * frameRate)-1, value: (-2 + (4 * ( frameRate /2) / ((frameRate/2) -1))) });
 
     xSlide.setKeys(keyFramesX);
-
-    return xSlide;
+    return xSlide
 }
 
-function createySlide(frameRate) {
-    const ySlide = new BABYLON.Animation(
+export function createySlide(frameRate: number){
+    const ySlide = new Animation(
         "ySlide",
         "position.y",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_FLOAT,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesY = [];
+    const keyFramesY: PositionArray[] = [];
     keyFramesY.push({ frame: 0, value: 2 });
-    keyFramesY.push({ frame: frameRate, value: -2 });
+    keyFramesY.push({ frame: frameRate / 2, value: 1 });
+    keyFramesY.push({ frame: frameRate, value: 2 });
+    keyFramesY.push({ frame: frameRate* 3 / 2, value: 4 });
     keyFramesY.push({ frame: 2 * frameRate, value: 2 });
 
     ySlide.setKeys(keyFramesY);
 
-    return ySlide;
+    return ySlide
 }
 
-function createxRotate(frameRate) {
-    const xRotation = new BABYLON.Animation(
+export function createxRotate(frameRate: number){
+    const xRotation = new Animation(
         "xRotation",
         "rotation.x",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_FLOAT,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesRX = [];
+    const keyFramesRX: PositionArray[]= [];
     keyFramesRX.push({ frame: 0, value: 0 });
     keyFramesRX.push({ frame: frameRate, value: Math.PI });
     keyFramesRX.push({ frame: 2 * frameRate, value: Math.PI * 2 });
 
     xRotation.setKeys(keyFramesRX);
 
-    return xRotation;
+    return xRotation
 }
 
-function createyRotate(frameRate) {
-    const yRotation = new BABYLON.Animation(
+export function createyRotate(frameRate: number){
+    const yRotation = new Animation(
         "yRotation",
         "rotation.y",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_FLOAT,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesRY = [];
+    const keyFramesRY: PositionArray[]= [];
     keyFramesRY.push({ frame: 0, value: 0 });
-    keyFramesRY.push({ frame: 2 * frameRate, value: Math.PI });
-    keyFramesRY.push({ frame: 4 * frameRate, value: Math.PI * 2 });
+    keyFramesRY.push({ frame: frameRate, value: Math.PI });
+    keyFramesRY.push({ frame: 2 * frameRate, value: Math.PI * 2 });
 
     yRotation.setKeys(keyFramesRY);
 
-    return yRotation;
+    return yRotation
 }
 
-function createV3scaling(frameRate) {
-    const v3scaling = new BABYLON.Animation(
+export function createV3scaling(frameRate: number) {
+    const v3scaling = new Animation(
         "v3Scaling",
         "scaling",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_VECTOR3,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesv3s = [];
-    keyFramesv3s.push({ frame: 0, value: new BABYLON.Vector3(1, 2, 3) }),
-    keyFramesv3s.push({ frame: 0.66 * frameRate, value: new BABYLON.Vector3(2, 3, 1) });
-    keyFramesv3s.push({ frame: 1.32 * frameRate, value: new BABYLON.Vector3(3, 1, 2) });
-    keyFramesv3s.push({ frame: 2 * frameRate, value: new BABYLON.Vector3(1, 2, 3) });
+    const keyFramesv3s: ScaleArray[] = [];
+    keyFramesv3s.push({ frame: 0, value: new Vector3(1, 2, 3) }),
+    keyFramesv3s.push({ frame: 0.66 * frameRate, value: new Vector3(2, 3, 1) });
+    keyFramesv3s.push({ frame: 1.32 * frameRate, value: new Vector3(3, 1, 2) });
+    keyFramesv3s.push({ frame: 2 * frameRate, value: new Vector3(1, 2, 3) });
 
     v3scaling.setKeys(keyFramesv3s);
 
     return v3scaling;
 }
 
-function createColorShift(frameRate) {
-    const colorShift = new BABYLON.Animation(
+
+export function createColorShift(frameRate: number) {
+    const colorShift = new Animation(
         "color3",
         "material.diffuseColor",
         frameRate,
-        BABYLON.Animation.ANIMATIONTYPE_COLOR3,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        Animation.ANIMATIONTYPE_COLOR3,
+        Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFramesC3 = [];
-    keyFramesC3.push({ frame: 0, value: new BABYLON.Color3(1, 0.5, 0.2) }),
-    keyFramesC3.push({ frame: 0.66 * frameRate, value: new BABYLON.Color3(0.5, 0.2, 1) });
-    keyFramesC3.push({ frame: 1.32 * frameRate, value: new BABYLON.Color3(0.2, 1, 0.5) });
-    keyFramesC3.push({ frame: 2 * frameRate, value: new BABYLON.Color3(1, 0.5, 0.2) });
+    const keyFramesC3: colorArray [] = [];
+    keyFramesC3.push({ frame: 0, value: new Color3(1, 0.5, 0.2) }),
+    keyFramesC3.push({ frame: 0.66 * frameRate, value: new Color3(0.5, 0.2, 1) });
+    keyFramesC3.push({ frame: 1.32 * frameRate, value: new Color3(0.2, 1, 0.5) });
+    keyFramesC3.push({ frame: 2 * frameRate, value: new Color3(1, 0.5, 0.2) });
 
    colorShift.setKeys(keyFramesC3);
 
     return colorShift;
 }
-
-function createLight(scene) {
-    const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
-    light.intensity = 0.7;
-    return light;
-}
-
-function createArcRotateCamera(scene) {
-    let camAlpha = -Math.PI / 2;
-    let camBeta = Math.PI / 2.5;
-    let camDist = 10;
-    let camTarget = new BABYLON.Vector3(0, 0, 0);
-    let camera = new BABYLON.ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
-    camera.attachControl(true);
-    return camera;
-}
-
-export default function createStartScene(engine) {
-    let that = {};
-    let scene = (that.scene = new BABYLON.Scene(engine));
-    //scene.debugLayer.show();
-
-    let box = (that.box = createBox(scene));
-    box.animations.push(createxSlide(frameRate));
-    box.animations.push(createySlide(frameRate));
-    box.animations.push(createxRotate(frameRate));
-    box.animations.push(createyRotate(frameRate));
-    box.animations.push(createV3scaling(frameRate));
-    box.animations.push(createColorShift(frameRate));
-
-    let light = (that.light = createLight(scene));
-    let camera = (that.camera = createArcRotateCamera(scene));
-
-    that.scene.beginAnimation(box, 0, 2 * frameRate, true);
-    return that;
-}
 ```
+
+These are added to the box and started in createRunScene.ts with the full listing:
+
+**createRunScene.ts**
+```javascript
+import { SceneData } from "./interfaces ";
+
+import { createxSlide, createySlide, createxRotate, createyRotate, createV3scaling,  createColorShift, frameRate } from "./animations";
+
+
+export default function createRunScene(runScene: SceneData) {
+  runScene.sphere.position.y = -2;    
+
+  runScene.box.animations.push(createxSlide(frameRate));
+  runScene.box.animations.push(createySlide(frameRate));
+  runScene.box.animations.push(createxRotate(frameRate));
+  runScene.box.animations.push(createyRotate(frameRate));
+  runScene.box.animations.push(createV3scaling(frameRate));
+  runScene.box.animations.push(createColorShift(frameRate));
+  runScene.scene.beginAnimation(runScene.box, 0, 2 * frameRate, true);
+}                                   
+```
+
+The result of the combined animations is shown here:
+
+<iframe 
+    height="460" 
+    width="100%" 
+    scrolling="no" 
+    title="frame animaations" 
+    src="Block_3/section_3/dist06/index.html" 
+    frameborder="no" 
+    loading="lazy" 
+    allowtransparency="true" 
+    allowfullscreen="true">
+</iframe>
