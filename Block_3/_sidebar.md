@@ -26,7 +26,7 @@
 * [Gui scene selector](Block_3/section_10/section_10.md)
 * [Mesh physics](Block_3/section_11/section_11.md)
 * [Setup Docker](Block_3/section_12/setup.md)
-* [Install babylonjs](Block_3/section_13/section_13.md)
+
 <!-- 
 -->
 <!--
