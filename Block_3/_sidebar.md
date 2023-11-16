@@ -18,7 +18,7 @@
 
 <hr/>
 
-<!-- 
+
 * [Changing scenes](Block_3/section_4/section_4.md)
 * [Frame Animation](Block_3/section_6/section_6.md)
 * [Mesh Animation](Block_3/section_7/section_7.md)
@@ -27,6 +27,7 @@
 * [Mesh physics](Block_3/section_11/section_11.md)
 * [Setup Docker](Block_3/section_12/setup.md)
 * [Install babylonjs](Block_3/section_13/section_13.md)
+<!-- 
 -->
 <!--
 * [<h3>Environments</h3>](Block_3/section_2/section_2.md)
