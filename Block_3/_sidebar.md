@@ -14,6 +14,7 @@
 * [Rotation](Block_3/section_2b/rotation.md)
 * [Frame Animation](Block_3/section_3/frames01.md)
 * [Shapes](Block_3/section_4/shapes01.md)
+* [Environment](Block_3/section_5/section_5.md)
 
 
 <hr/>
