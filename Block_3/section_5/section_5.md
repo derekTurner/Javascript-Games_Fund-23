@@ -441,7 +441,7 @@ Then with all of this in place the scene will appear as:
     width="100%" 
     scrolling="no" 
     title="shapes" 
-    src="Block_3/section_5/dist/index.html" 
+    src="Block_3/section_5/distrib/index.html" 
     frameborder="no" 
     loading="lazy" 
     allowtransparency="true" 
