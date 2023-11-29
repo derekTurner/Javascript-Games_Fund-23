@@ -1,5 +1,29 @@
 # Moving a mesh by keyboard action
 
+In this section a mesh will be loaded into a simple scene and caused to move across a plane in response to the "AWSD" keys.
+
+As part of the simple environment a .skybox will be addede to the scene.
+
+The next step of development will be to cause a mesh to spin i response to a mouse click, and to stop again when the mouse hold is prolonged.
+
+Then the baked in animations of th model will be accessed to simulate walking with motion.
+
+## Structure
+
+In order to organise the code into small manageable modules, the code will be structured with files: dreateRunScene.ts, createStartScene.ts, interfaces.d.ts and keyActionManager.ts.
+
+The aim is to separate the code for scene layout from that for scene action and to hold reusable code in separate small module files.
+
+The overall folder structure will be:
+
+![structure](images/structure.jpg)
+
+In the usual way index.html points to index.ts which calls the createStartScene and CreateRun Scene files and renders the scene.
+
+## The basic scene
+
+
+
 A mesh can be added to a scene using the BABYLON.SceneLoader.ImportMesh(meshNames, rootUrl, sceneFilename, scene, onSuccess, onProgress, onError, message: , pluginExtension)) The parameters are optional so in this example only the first 5 are used.
 
 This example prepares a scene with a single mesh which can be manipulated by the wasd keys of the arrow keys.
