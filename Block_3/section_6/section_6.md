@@ -4,6 +4,8 @@ In this section a mesh will be loaded into a simple scene and caused to move acr
 
 As part of the simple environment a .skybox will be addede to the scene.
 
+Audio will be added which can be switched on and off by keypress.
+
 The next step of development will be to cause a mesh to spin i response to a mouse click, and to stop again when the mouse hold is prolonged.
 
 Then the baked in animations of th model will be accessed to simulate walking with motion.
@@ -22,772 +24,414 @@ In the usual way index.html points to index.ts which calls the createStartScene 
 
 ## The basic scene
 
-
-
-A mesh can be added to a scene using the BABYLON.SceneLoader.ImportMesh(meshNames, rootUrl, sceneFilename, scene, onSuccess, onProgress, onError, message: , pluginExtension)) The parameters are optional so in this example only the first 5 are used.
-
-This example prepares a scene with a single mesh which can be manipulated by the wasd keys of the arrow keys.
-
-The item in **createScene1.js** is a variable declared as an empty array.  This will be global within the module described in this file, but the values will not be available within other modules.  So similarly named variables in multiple createSceneN.js modules would not be in conflict.
+The elements to be displayed in the scene are set out in **createStartScene**
+First the sceneData interface is imported and the required resources are imported to match the requirements of the elements required.
 
 ```javascript
-var keyDownMap =[];
+import { SceneData } from "./interfaces ";
+
+import {
+  Scene,
+  ArcRotateCamera,
+  Vector3,
+  MeshBuilder,
+  StandardMaterial,
+  HemisphericLight,
+  Color3,
+  Engine,
+  Texture,
+  SceneLoader,
+  AbstractMesh,
+  ISceneLoaderAsyncResult,
+  Sound
+} from "@babylonjs/core";
 ```
-The keyDownMap array will store the state of keyboard presses which are monitored by a scene action manager.
-
-Only one scene action manager is needed.
+Backgrouond music is added from an audio file stored in the assets folder.  This is set with autoplay initally true.  However browsers prevent pop up windows from launching audio so babylon provides a system which will start the audio only after the application window has been clicked.  This uses the audio engine custom unlocked button.  When a window event corresponding to a click happens the audio will be enabled.  This window event only needs to happen onece, after the first click the browser is happy to play audio.
 
 ```javascript
-function actionManager(scene){
-    scene.actionManager = new BABYLON.ActionManager(scene);
-```
+function backgroundMusic(scene: Scene): Sound{
+  let music = new Sound("music", "./assets/audio/arcade-kid.mp3", scene,  null ,
+   {
+      loop: true,
+      autoplay: true
+  });
 
-An action can then be registered with the with this action manager. This will be an execute code action stating what condition will trigger the execution of the code.  The trigger condition can be filtered by parameters.  The code to be executed is then stated as a function.
+  Engine.audioEngine!.useCustomUnlockedButton = true;
 
-The first execute code action to be registered is triggered by an `onKeyDownTrigger` which genereates an event when a key is pressed.  If you wanted to limit the triggering to a single key, this could be added as a parameter.  This is illustrated for the 'w' key, but that is commented out so that all keys trigger an event `evt`.
-
-The function makes an entry in the keyDownMaw indexed by the key pressed and sets this to true.  So for example keyDownMap["w"] = true when the "w" key is pressed.  
-
-If two keys are pressed there will be two entries in the array so possibly  keyDownMap["w"] = true and also keyDownMap["a"] = true.
-
-```javascript
-      new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyDownTrigger,
-            //parameters: 'w'      
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = true; }
-        )
-    );
-```
-
-An execute code action which is triggered when a key is released is then also registered with the actionManager.
-
-This will set the array entry for that key to false.  So, on raising the "w" key keyDownMap["w"] = false.
-
-The scene action manager is returned at the end of the actionManager function.
-
-```javascript
-    scene.actionManager.registerAction(
-        new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyUpTrigger
-            
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = false; }
-        )
-    );
-    return scene.actionManager;
-```
-
-The function importMesh() ises a BABYLON.SceneLoader.ImportMesh() function to load a mesh which is in this case in the .babylon format.  The last argument in the function is a function which will be run on the successful loading of the `newMeshes`. This function has another optional parameter of `skeletons`, but this is not required here.
-
-The function then reads the first array member newMesh[0] into a convenient local variable.
-
-This then adds an anonymous function to the list of functions which the scene will render before each frame.
-
-Note that the although the function refers to the mesh positions and rotations it is not a property or method of the imported mesh but is a feature of the scene.
-
-```javascript
-function importMesh(scene, x, y) {
-    let item = BABYLON.SceneLoader.ImportMesh("", "./assets/models/", "dummy3.babylon", scene, function(newMeshes) {
-        let mesh = newMeshes[0];
-        scene.onBeforeRenderObservable.add(()=> {
-```
-The details of the function inspect the state of the keyDownMap and increment the position and set the degree of rotation to move the mesh.  Note that the keyDownMap is only read not written, so as long as a listed key is pressed the position will be incremented once per frame.
-
-To make a "one shot" version, the keyDownMap could be cleared at the end of the function.
-
-Finaly the mesh plugin is returned  at the close of the importMesh() function.
-
-```javascript
-            if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
-                mesh.position.z += 0.1;
-                mesh.rotation.y = 0;
-            }
-            if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
-                mesh.position.x -= 0.1;
-                mesh.rotation.y = 3 * Math.PI / 2;
-            }
-            if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
-                mesh.position.z -= 0.1;
-                mesh.rotation.y = 2 * Math.PI / 2;
-            }
-            if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
-                mesh.position.x += 0.1;
-                mesh.rotation.y = Math.PI / 2;
-            }
-        });
-    });
-    return item
-}    
-```
-
-As an addition to the scene audio is added from an mp3 file which will start automatically and loop continuously.
-
-It is a policy of browsers not to allow audio to autoplay, so some browsers will force you to click an icon to allow the audio to play.
-
-```javascript
-function backgroundMusic(scene){
-    let music = new BABYLON.Sound("music", "./assets/audio/arcade-kid.mp3", scene, null, {
-        loop: true,
-        autoplay: true
-    });
-    return music;
+  // Unlock audio on first user interaction.
+  window.addEventListener('click', () => {
+    if(!Engine.audioEngine!.unlocked){
+        Engine.audioEngine!.unlock();
+    }
+}, { once: true });
+  return music;
 }
 ```
-Mote that the camera is usually controlled by the arrow keys, so to prevent this the camera controls are not attached.
+
+The ground is using a wood texture which would initially make planks look too large.  By applying uscale and vscale to the groundTexture the plank size can be made more realistic.
+
+This texture is then stored as the diffuse Texture of the ground material.
+
+Back face culling being false means that the underside of the ground plane will not be transparent.
+
+After creating ground, the ground material is applied as the ground.material.
+
+```javascript
+function createGround(scene: Scene) {
+  const groundMaterial = new StandardMaterial("groundMaterial");
+  const groundTexture = new Texture("./assets/textures/wood.jpg");
+  groundTexture.uScale  = 4.0; //Repeat 4 times on the Vertical Axes
+  groundTexture.vScale  = 4.0; //Repeat 4 times on the Horizontal Axes
+  groundMaterial.diffuseTexture = groundTexture;
+ // groundMaterial.diffuseTexture = new Texture("./assets/textures/wood.jpg");
+  groundMaterial.diffuseTexture.hasAlpha = true;
+
+  groundMaterial.backFaceCulling = false;
+  let ground = MeshBuilder.CreateGround(
+    "ground",
+    { width: 15, height: 15, subdivisions: 4 },
+    scene
+  );
+
+  ground.material = groundMaterial;
+  return ground;
+}
+```
+
+A hemispheric light is fairly standard to create basic scene illumination.
+
+```javascript
+function createHemisphericLight(scene: Scene) {
+  const light = new HemisphericLight(
+    "light",
+    new Vector3(2, 1, 0), // move x pos to direct shadows
+    scene
+  );
+  light.intensity = 0.7;
+  light.diffuse = new Color3(1, 1, 1);
+  light.specular = new Color3(1, 0.8, 0.8);
+  light.groundColor = new Color3(0, 0.2, 0.7);
+  return light;
+}
+```
+
+An arc rotate camera is created and its motion restricted so that the scene cannot be viewed from below ground.
+
+```javascript
+function createArcRotateCamera(scene: Scene) {
+  let camAlpha = -Math.PI / 2,
+    camBeta = Math.PI / 2.5,
+    camDist = 15,
+    camTarget = new Vector3(0, 0, 0);
+  let camera = new ArcRotateCamera(
+    "camera1",
+    camAlpha,
+    camBeta,
+    camDist,
+    camTarget,
+    scene
+  );
+  camera.lowerRadiusLimit = 9;
+  camera.upperRadiusLimit = 25;
+  camera.lowerAlphaLimit = 0;
+  camera.upperAlphaLimit = Math.PI * 2;
+  camera.lowerBetaLimit = 0;
+  camera.upperBetaLimit = Math.PI / 2.02;
+
+  camera.attachControl(true);
+  return camera;
+}
+```
+A mesh is imported from a file in .babylon format.  Other mesh formats can be used, but the .babylon format is reliable.  Some other formats need work arounds to use them effectively.
+
+The process of loading a model is asynchonous.   The programme has moved on before the loading is complete.
+
+The item returned is not a mesh, but a Promise of type ISceneLoaderAsyncResult.  A promice can be resolved by accessing its ``then`` property, so item cannot be treated as a simple variable.  Because you can't predict when it has completed you have to check the ``then`` property at all points in the programme, including in other module files.
+
+For a .babylon mesh the key property of the mesh is meshes[0], manipulating this enables the mesh to be initially positioned and subsequently moved.
+
+```javascript
+function importMeshA(scene: Scene, x: number, y: number) {
+  let item: Promise<void | ISceneLoaderAsyncResult> =
+    SceneLoader.ImportMeshAsync(
+      "",
+      "./assets/models/men/",
+      "dummy3.babylon",
+      scene
+    );
+
+  item.then((result) => {
+    let character: AbstractMesh = result!.meshes[0];
+    character.position.x = x;
+    character.position.y = y + 0.1;
+    character.scaling = new Vector3(1, 1, 1);
+    character.rotation = new Vector3(0, 1.5, 0);
+  });
+  return item;
+}
+```
+
+That is a simple scene, I have not even included a skybox here, but I will control the appearance of the sky subsequently.
+
+Call the functions which create the scene and add them to the that object.
+
+```javascript
+export default function createStartScene(engine: Engine) {
+  let scene = new Scene(engine);
+  let audio = backgroundMusic(scene);
+  let lightHemispheric = createHemisphericLight(scene);
+  let camera = createArcRotateCamera(scene);
+  let player = importMeshA(scene, 0, 0);
+  let ground = createGround(scene);
+
+  let that: SceneData = {
+    scene,
+    audio,
+    lightHemispheric,
+    camera,
+    player,
+    ground,
+  };
+  return that;
+}
+
+```
+Now the details of **interface.d.ts** must exactly match the details of SceneData.
+
+```javascript
+import {
+  Scene,
+  Sound,
+  Mesh,
+  HemisphericLight,
+  Camera,
+  ISceneLoaderAsyncResult,
+} from "@babylonjs/core";
+
+export interface SceneData {
+  scene: Scene;
+  audio: Sound;
+  lightHemispheric: HemisphericLight;
+  camera: Camera;
+  player: Promise<void | ISceneLoaderAsyncResult>;
+  ground: Mesh;
+}
+```
+This interface will allow the features of the scene to be accessed within other code modules.
+
+The **index.ts** file follows an established pattern calling createStartScene to set up the scene elements and createRunScene to apply actions to these scene elements.
+
+```javascript
+import { Engine} from "@babylonjs/core";
+import createStartScene from "./createStartScene";
+import createRunScene from "./createRunScene";
+import "./main.css";
+
+
+const CanvasName = "renderCanvas";
+
+let canvas = document.createElement("canvas");
+canvas.id = CanvasName;
+
+canvas.classList.add("background-canvas");
+document.body.appendChild(canvas);
+
+let eng = new Engine(canvas, true, {}, true);
+let startScene = createStartScene(eng);
+createRunScene(startScene);
+
+eng.runRenderLoop(() => {
+  startScene.scene.render();
+});
+```
+
+The actions are added to the scene in the **createRunScene.ts** module.  Asd usual the imported resources are added at the top of the code.  As more action is added to the scene the code could become large and difficult to read so I favour moving reusable code out to separate module files and in this case a separate keyActionManage file has been created which will be inspected later.  For now you keed to know that keyActionManager file maintains an array of the currently pressed keys in a keyDownMap. The getKeyDown function will tell wheter a key is currently pressed returning 1 if it is.  For sections of code where it would not be useful to respond to the key being down multiple times while it is being held, a keyDownHold function can cause getKeyDown to return 2 which will represent a held state.
+
+```javascript
+import { AbstractMesh, CubeTexture, _ENVTextureLoader } from "@babylonjs/core";
+import { SceneData } from "./interfaces ";
+import {
+  keyActionManager,
+  keyDownMap,
+  keyDownHeld,
+  getKeyDown,
+} from "./keyActionManager";
+```
+I did not define a sky box so I am going to use a different method to add a default skybox to the scene.  This will require envTextureLoader and scenHelpers.
+
+```javascript
+import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader";
+import "@babylonjs/core/Helpers/sceneHelpers";
+```
+The createRunScene function will be called from the index.ts file.  This will call a keyActionManeager which will keep track of keypresses.
+
+```javascript
+export default function createRunScene(runScene: SceneData) {
+  keyActionManager(runScene.scene);
+```
+
+A nice type of scene image is an HDRI format.  These are available at [ambient.cg](https://ambientcg.com/list?type=HDRI) and also at [Poly](https://polyhaven.com/hdris).  A key property of thes is that they provide illumination into the scene as well as an outer 360 image.
+
+BabylonJS does not normally use the HDRI directly but a [community tool](https://www.babylonjs.com/tools/ibl/#) will convert these to a .env format.  Just drag the HDRI file into the tools window and wait patiently till a .env file is delivered to your downloads folder.  You can rename this to suit but retain the .env filename.
+
+You will see that the .env file represents a cube texture to be loaded into the scene and a default skybox can then be created from this.  The result is better than the skybox made from six square images.
+
+
+```javascript
+
+  const environmentTexture = new CubeTexture(
+    "assets/textures/industrialSky.env",
+    runScene.scene
+  );
+  const skybox = runScene.scene.createDefaultSkybox(
+    environmentTexture,
+    true,
+    10000,
+    0.1
+  );
+```
+The audio which was added to the scene becomes active when the scene window is clicked.  This can be initially stopped.  Then by adding code to the onBeforeRenderObservable the state of the keypresses can be tested at the frame rate.
+
+I want to press the "m" key to toggle the music between playing and being stopped.  I want to avoid the music being turned on and off at the frame rate while ever the "m" key is pressed.  
+
+On the first frame when a key is pressed the value returned from getKeyDown will be 1 and the code will respond with the required action.
+
+The keyDownHeld function will caus the getKeyDown to return a value of 2 until the key is released and this will prevent repeated audio switching while the key is held down.
+
+Upon key release the getKeyDown() function will return 0.
+
+```javascript
+  runScene.audio.stop();
+  runScene.scene.onBeforeRenderObservable.add(() => {
+    // check and respond to keypad presses
+
+    if (getKeyDown() == 1 && (keyDownMap["m"] || keyDownMap["M"])) {
+      keyDownHeld();
+      if (runScene.audio.isPlaying) {
+        runScene.audio.stop();
+      } else {
+        runScene.audio.play();
+      }
+    }
+```
+To address the position and rotation of the mesh under keyboard control the promise which is represented by the player variable must be resolved using and anonymous function responding to the status of .then.  If you are not comfortable with this, check up notes on javascript pormises.
+
+The character should continue to move while ever a key is held down and so it is only necessary to look at the keyDownMap array and getKeyDown() does not need to be tested.
+
+The character will respond to "wasm" and arrow keys.
+
+```javascript
+    runScene.player.then((result) => {
+      let character: AbstractMesh = result!.meshes[0];
+      if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
+        character.position.x -= 0.1;
+        character.rotation.y = (3 * Math.PI) / 2;
+      }
+      if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
+        character.position.z -= 0.1;
+        character.rotation.y = (2 * Math.PI) / 2;
+      }
+      if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
+        character.position.x += 0.1;
+        character.rotation.y = (1 * Math.PI) / 2;
+      }
+      if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
+        character.position.z += 0.1;
+        character.rotation.y = (0 * Math.PI) / 2;
+      }
+    });
+  });
+
+```
+
+That concludes the onBeforeRenderObservable section.  There is also an AfterRenderObservable which could be used to drive code at the frame rate.  An empty stub of code is left so that this could be used if required.
+
+```javascript
+
+  runScene.scene.onAfterRenderObservable.add(() => {});
+}
+```
+
+That brings us to the details of the **keyActionManager.ts** mopdule which is monitoring keypresses.
+
+The first few lines import the required resources.
+```javascript
+import { ExecuteCodeAction } from "@babylonjs/core/Actions";
+import { ActionManager } from "@babylonjs/core/Actions/actionManager";
+import { Scene } from "@babylonjs/core/scene";
+```
+The module will export the main function which is the keyActionManager and also n array of keyypresses and functions to get and set the value of keyDown.
+
+```javascript
+export let keyDownMap: Boolean[] = [];
+let keyDown:number = 0;
+export function keyDownHeld(){ keyDown = 2}; 
+export function getKeyDown():number {return keyDown};
+
+export function keyActionManager(scene: Scene) {
+```
+The actionManager is created by using the ActionManager constructor.
+
+```javascript    
+  scene.actionManager = new ActionManager(scene);
+```
+The actionmanager can then register Actions.  This first registers code action which will be triggered whilever a key is depressed.
+
+```javascript
+  scene.actionManager.registerAction(
+    new ExecuteCodeAction(
+      {
+        trigger: ActionManager.OnKeyDownTrigger,
+      },
+      function (evt) {
+        if (keyDown == 0){keyDown ++}
+        keyDownMap[evt.sourceEvent.key] = true;
+      }
+    )
+  );
+```
+If the current state of keyDown is 0 (not pressed) the trigger is noted by setting keyDown to a value of 1.  
+
+The keyDownMap will now have a value of true indexed by the name of every key which is depressed.  So this can respond to a case where two or more keys are pressed simoultaneously.
+
+Another execution code action is registered with an on key up trigger.  This will clear the array entry for the key which has been released and will set the keyDown value badk to 0.
+
+That works for us but there is still an issue that the music could be toggled if the "m" kiy is held and another key is released.  Try that out and ask how you could refine the code to remove this effect.
+
+```javascript  
+  scene.actionManager.registerAction(
+    new ExecuteCodeAction(
+      {
+        trigger: ActionManager.OnKeyUpTrigger,
+      },
+      function (evt) {
+        keyDown = 0;
+        keyDownMap[evt.sourceEvent.key] = false;
+      }
+    )
+  );
+  return scene.actionManager;
+}
+```
+
+Note that the camera is usually controlled by the arrow keys, so to prevent this the camera controls must be released by commenting out the code.
 
 ```javascript
     //camera.attachControl(true);
 ```
 
-The result is that the character can be moved by the usual keys.  Try pressing "w" and "a" for diagonal motion.
+The result is that the character can be moved by the usual keys.  Try pressing "w" and "a" for diagonal motion.  Try moving the camera around to see the effect of the illumination.
 
 <iframe 
     height="460" 
     width="100%" 
     scrolling="no" 
     title="Mesh wasd" 
-    src="Block_3/section_9/ex_01_player_motion/showScene1.html" 
+    src="Block_3/section_6/distribution/index.html" 
     frameborder="no" 
     loading="lazy" 
     allowtransparency="true" 
     allowfullscreen="true">
 </iframe>
 
-A full listing of **createScene1** is provided:
-```javascript
-var keyDownMap =[];
-
-function importMesh(scene, x, y) {
-    let item = BABYLON.SceneLoader.ImportMesh("", "./assets/models/", "dummy3.babylon", scene, function(newMeshes) {
-        let mesh = newMeshes[0];
-        scene.onBeforeRenderObservable.add(()=> {
-            if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
-                mesh.position.z += 0.1;
-                mesh.rotation.y = 0;
-            }
-            if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
-                mesh.position.x -= 0.1;
-                mesh.rotation.y = 3 * Math.PI / 2;
-            }
-            if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
-                mesh.position.z -= 0.1;
-                mesh.rotation.y = 2 * Math.PI / 2;
-            }
-            if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
-                mesh.position.x += 0.1;
-                mesh.rotation.y = Math.PI / 2;
-            }
-        });
-    });
-    return item
-}    
-    
-function actionManager(scene){
-    scene.actionManager = new BABYLON.ActionManager(scene);
-
-    scene.actionManager.registerAction(
-        new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyDownTrigger,
-            //parameters: 'w'      
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = true; }
-        )
-    );
-    scene.actionManager.registerAction(
-        new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyUpTrigger
-            
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = false; }
-        )
-    );
-    return scene.actionManager;
-}
-
-function backgroundMusic(scene){
-    let music = new BABYLON.Sound("music", "./assets/audio/arcade-kid.mp3", scene, null, {
-        loop: true,
-        autoplay: true
-    });
-    return music;
-}
-
-function createGround(scene){
-    const ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 10, width: 10, subdivisions: 4});
-    return ground;
-}
-
-function createLight(scene) {
-    const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
-    light.intensity = 0.7;
-    return light;
-}
-
-function createArcRotateCamera(scene) {
-    let camAlpha = -Math.PI / 2;
-    let camBeta = Math.PI / 2.5;
-    let camDist = 15;
-    let camTarget = new BABYLON.Vector3(0, 0, 0);
-    let camera = new BABYLON.ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
-    //camera.attachControl(true);
-    return camera;
-}
-
-export default function createStartScene(engine) {
-    let that = {};
-    let scene = (that.scene = new BABYLON.Scene(engine));
-    //scene.debugLayer.show();
-
-    let light = (that.light = createLight(scene));
-    let camera = (that.camera = createArcRotateCamera(scene));
-    let ground = (that.ground = createGround(scene));
-    let manager = (that.actionManager = actionManager(scene));
-    let mesh1   = (that.mesh1 = importMesh(scene, 0, 0));
-    let bgMusic = (that.bgMusic = backgroundMusic(scene));
-    
-    return that;
-}
-```
-
-## Incremental Motion
-
-In the last example motion was added to the scene.1`onBeforeRenderObservable`.  In this example additonal rotational motion is added via an `IncrementalValueAction`.
-
-In **createScene2.js** Within the importMesh() a flag object `tempItem` is added which can take the values true and false and is initially false. 
-
-```javascript
-var keyDownMap =[];
-
-function importMesh(scene, x, y) {
-    let tempItem = { flag: false }
-```
-The `onBeforeRenderObservable` section is unchanged to provide the keypress control of translational motion. 
-
-```javascript
-
-    let item = BABYLON.SceneLoader.ImportMesh("", "./assets/models/", "dummy3.babylon", scene, function(newMeshes, skeletons) {
-        let mesh = newMeshes[0];
-        scene.onBeforeRenderObservable.add(()=> {
-            if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
-                mesh.position.z += 0.1;
-                mesh.rotation.y = 0;
-            }
-            if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
-                mesh.position.x -= 0.1;
-                mesh.rotation.y = 3 * Math.PI / 2;
-            }
-            if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
-                mesh.position.z -= 0.1;
-                mesh.rotation.y = 2 * Math.PI / 2;
-            }
-            if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
-                mesh.position.x += 0.1;
-                mesh.rotation.y = Math.PI / 2;
-            }
-        });
-```
-
-An `IncrementalValueAction` is registered to the `scene.actionManager` which will be triggered on every frame.  This will increment the mesh.rotation.y by 0.1 every frame provided that the value of tempItem.flag is true.
-
-Initially this flag is set false so there is no continuous rotation.
-
-```javascript
-       scene.actionManager.registerAction(
-            new BABYLON.IncrementValueAction(
-                BABYLON.ActionManager.OnEveryFrameTrigger,
-                mesh,
-                'rotation.y',
-                0.1,
-                new BABYLON.PredicateCondition(
-                    mesh.actionManager,
-                    function () {
-                        return tempItem.flag == true
-                    }
-                )
-            )
-        ); 
-```
-
-An new `actionManager` is now attached to the `mesh`
-
-```javascript
-       mesh.actionManager = new BABYLON.ActionManager(scene);
-```
-
-A `SetValueAction` is registered to the `mesh.actionManager`.  When this `SetValueAction` is triggered by the mouse key being held down over the mesh to cause an `onPickDownTrigger`, the value of tempItem is set to true.  This will allow the mesh to start spinning.
-
-```javascript
-      mesh.actionManager.registerAction(
-            new BABYLON.SetValueAction(
-                BABYLON.ActionManager.OnPickDownTrigger,
-                tempItem,
-                'flag',
-                true
-            )
-        );
-```
-
-Holding the mouse key down over the mesh for a longer time will fire an `OnLongPressTrigger` and the tempItem flag will be returned to false.  Spinning will stop.
-
-```javascript
-        mesh.actionManager.registerAction(
-            new BABYLON.SetValueAction(
-                BABYLON.ActionManager.OnLongPressTrigger,
-                tempItem,
-                'flag',
-                false
-            )
-        ); 
-```
-The `importMesh()` function is then finished off by returning the item.
-
-The result is shown in the example below.  Note what happens to the rotation when the "wasd" keys are used.
-
-<iframe 
-    height="460" 
-    width="100%" 
-    scrolling="no" 
-    title="Mesh wasd" 
-    src="Block_3/section_9/ex_01_player_motion/showScene2.html" 
-    frameborder="no" 
-    loading="lazy" 
-    allowtransparency="true" 
-    allowfullscreen="true">
-</iframe>
-
-The full listing of **createScene2.js** is then:
-
-```javascript
-var keyDownMap =[];
-
-function importMesh(scene, x, y) {
-    let tempItem = { flag: false }
-    let item = BABYLON.SceneLoader.ImportMesh("", "./assets/models/", "dummy3.babylon", scene, function(newMeshes, skeletons) {
-        let mesh = newMeshes[0];
-        scene.onBeforeRenderObservable.add(()=> {
-            if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
-                mesh.position.z += 0.1;
-                mesh.rotation.y = 0;
-            }
-            if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
-                mesh.position.x -= 0.1;
-                mesh.rotation.y = 3 * Math.PI / 2;
-            }
-            if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
-                mesh.position.z -= 0.1;
-                mesh.rotation.y = 2 * Math.PI / 2;
-            }
-            if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
-                mesh.position.x += 0.1;
-                mesh.rotation.y = Math.PI / 2;
-            }
-        });
-
-        scene.actionManager.registerAction(
-            new BABYLON.IncrementValueAction(
-                BABYLON.ActionManager.OnEveryFrameTrigger,
-                mesh,
-                'rotation.y',
-                0.1,
-                new BABYLON.PredicateCondition(
-                    mesh.actionManager,
-                    function () {
-                        return tempItem.flag == true
-                    }
-                )
-            )
-        ); 
-
-        mesh.actionManager = new BABYLON.ActionManager(scene);
-    
-    
-        mesh.actionManager.registerAction(
-            new BABYLON.SetValueAction(
-                BABYLON.ActionManager.OnPickDownTrigger,
-                tempItem,
-                'flag',
-                true
-            )
-        );
-        
-        mesh.actionManager.registerAction(
-            new BABYLON.SetValueAction(
-                BABYLON.ActionManager.OnLongPressTrigger,
-                tempItem,
-                'flag',
-                false
-            )
-        ); 
-
-    });
-
-    return item
-}    
-    
-function actionManager(scene){
-    scene.actionManager = new BABYLON.ActionManager(scene);
-
-    scene.actionManager.registerAction(
-        new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyDownTrigger,
-            //parameters: 'w'      
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = true; }
-        )
-    );
-
-    scene.actionManager.registerAction(
-        new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyUpTrigger
-            
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = false; }
-        )
-    );   
-
-
-    return scene.actionManager;
-}
-
-function addRotation(target, scene){
-
- /*    */
-} 
-
-function backgroundMusic(scene){
-    let music = new BABYLON.Sound("music", "./assets/audio/arcade-kid.mp3", scene, null, {
-        loop: true,
-        autoplay: true
-    });
-    return music;
-}
-
-function createGround(scene){
-    const ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 10, width: 10, subdivisions: 4});
-    return ground;
-}
-
-function createLight(scene) {
-    const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
-    light.intensity = 0.7;
-    return light;
-}
-
-function createArcRotateCamera(scene) {
-    let camAlpha = -Math.PI / 2;
-    let camBeta = Math.PI / 2.5;
-    let camDist = 15;
-    let camTarget = new BABYLON.Vector3(0, 0, 0);
-    let camera = new BABYLON.ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
-    //camera.attachControl(true);
-    return camera;
-}
-
-export default function createStartScene(engine) {
-    let that = {};
-    let scene = (that.scene = new BABYLON.Scene(engine));
-    //scene.debugLayer.show();
-
-    let light = (that.light = createLight(scene));
-    let camera = (that.camera = createArcRotateCamera(scene));
-    let ground = (that.ground = createGround(scene));
-    
-    let manager = (that.actionManager = actionManager(scene));
-    let mesh1 = (that.mesh1 = importMesh(scene, 0, 0));
-    addRotation(mesh1, scene);
-
-    let bgMusic = (that.bgMusic = backgroundMusic(scene));
-    
-    
-    return that;
-}
-```
-
-## Baked in animations
-
-The dummy mesh which is being imported has a set of animations which were baked into the model.   These include a walking animation which can be used when the player moves.
-
-All the changes needed can be added to the `importMesh()` function.  The 'onSucess' function will now need to include arguments: newMeshes, particleSystems and skeletons.  The particle systems are not being used, but because the argument order is important, the function will not recognise skeletons unless the particleSystems are included.
-
-
-
-```javascript
-function importMesh(scene, x, y) {
-    let tempItem = { flag: false }
-    let item = BABYLON.SceneLoader.ImportMesh("", "./assets/models/", "dummy3.babylon", scene, function(newMeshes, particleSystems ,skeletons) {
-```
-
-Now a variable is added to use skeletons[0].
-
-The animation properties baked into the model can be modified by controlling the properties of a new `AnimationProperties`
-
-```javascript
-        let mesh = newMeshes[0];
-        let skeleton = skeletons[0];
-        skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
-        skeleton.animationPropertiesOverride.enableBlending = true;
-        skeleton.animationPropertiesOverride.blendingSpeed = 0.05;
-        skeleton.animationPropertiesOverride.loopMode = 1;
-```
-
-Read the animation ranges in from the skeleton.  I am using the "Ybot_Walk", there are others available which I have commented out which may be useful later.
-
-```javascript
-        var walkRange = skeleton.getAnimationRange("YBot_Walk");
-        // var runRange = skeleton.getAnimationRange("YBot_Run");
-        // var leftRange = skeleton.getAnimationRange("YBot_LeftStrafeWalk");
-        // var rightRange = skeleton.getAnimationRange("YBot_RightStrafeWalk");
-        //var idleRange = skeleton.getAnimationRange("YBot_Idle");
-```
-If the bot is not animating the animation must be begun when the bot moves, however if the bot is in continuous movement the animation should not be restarted on each frame.  To contol this an animating variable os added.
-
-```javascript
-      var animating = false;
-```
-
-Now the `onBeforeRenderObservable` added function proceeds to set the x y motion on the basis of keypresses.  If a valid key is detected the keydown variable is set true.
-
-```javascript
-       scene.onBeforeRenderObservable.add(()=> {
-            var keydown = false;
-            if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
-                mesh.position.z += 0.1;
-                mesh.rotation.y = 0;
-                keydown=true;
-            }
-            if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
-                mesh.position.x -= 0.1;
-                mesh.rotation.y = 3 * Math.PI / 2;
-                keydown=true;
-            }
-            if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
-                mesh.position.z -= 0.1;
-                mesh.rotation.y = 2 * Math.PI / 2;
-                keydown=true;
-            }
-            if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
-                mesh.position.x += 0.1;
-                mesh.rotation.y = Math.PI / 2;
-                keydown=true;
-            }
-```
-
-If the bot is moving at this point keydown will be true and this is used to start the animation, providing it is not already running.
-
-
-
-```javascript
-           if(keydown){
-                if(!animating){
-                    animating = true;
-                    scene.beginAnimation(skeleton, walkRange.from, walkRange.to, true);
-                }
-            }else{
-                animating = false;
-                scene.stopAnimation(skeleton)
-            }
-        });
-```
-
-The rest of the file is unchanged.
-
-The scene now looks like this:
-
-<iframe 
-    height="460" 
-    width="100%" 
-    scrolling="no" 
-    title="Mesh stride" 
-    src="Block_3/section_9/ex_01_player_motion/showScene3.html" 
-    frameborder="no" 
-    loading="lazy" 
-    allowtransparency="true" 
-    allowfullscreen="true">
-</iframe>
-
-The full listing of **createScene3.js** is now:
-
-```javascript
-// references https://www.babylonjs-playground.com/#15EY4F#15
-var keyDownMap =[];
-
-function importMesh(scene, x, y) {
-    let tempItem = { flag: false }
-    let item = BABYLON.SceneLoader.ImportMesh("", "./assets/models/", "dummy3.babylon", scene, function(newMeshes, particleSystems ,skeletons) {
-        let mesh = newMeshes[0];
-        let skeleton = skeletons[0];
-        skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
-        skeleton.animationPropertiesOverride.enableBlending = true;
-        skeleton.animationPropertiesOverride.blendingSpeed = 0.05;
-        skeleton.animationPropertiesOverride.loopMode = 1;
-        
-        var walkRange = skeleton.getAnimationRange("YBot_Walk");
-        // var runRange = skeleton.getAnimationRange("YBot_Run");
-        // var leftRange = skeleton.getAnimationRange("YBot_LeftStrafeWalk");
-        // var rightRange = skeleton.getAnimationRange("YBot_RightStrafeWalk");
-        //var idleRange = skeleton.getAnimationRange("YBot_Idle");
-        var animating = false;
-
-        scene.onBeforeRenderObservable.add(()=> {
-            var keydown = false;
-            if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
-                mesh.position.z += 0.1;
-                mesh.rotation.y = 0;
-                keydown=true;
-            }
-            if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
-                mesh.position.x -= 0.1;
-                mesh.rotation.y = 3 * Math.PI / 2;
-                keydown=true;
-            }
-            if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
-                mesh.position.z -= 0.1;
-                mesh.rotation.y = 2 * Math.PI / 2;
-                keydown=true;
-            }
-            if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
-                mesh.position.x += 0.1;
-                mesh.rotation.y = Math.PI / 2;
-                keydown=true;
-            }
-
-            if(keydown){
-                if(!animating){
-                    animating = true;
-                    scene.beginAnimation(skeleton, walkRange.from, walkRange.to, true);
-                }
-            }else{
-                animating = false;
-                scene.stopAnimation(skeleton)
-            }
-        });
-
-        scene.actionManager.registerAction(
-            new BABYLON.IncrementValueAction(
-                BABYLON.ActionManager.OnEveryFrameTrigger,
-                mesh,
-                'rotation.y',
-                0.1,
-                new BABYLON.PredicateCondition(
-                    mesh.actionManager,
-                    function () {
-                        return tempItem.flag == true
-                    }
-                )
-            )
-        ); 
-
-        mesh.actionManager = new BABYLON.ActionManager(scene);
-    
-    
-        mesh.actionManager.registerAction(
-            new BABYLON.SetValueAction(
-                BABYLON.ActionManager.OnPickDownTrigger,
-                tempItem,
-                'flag',
-                true
-            )
-        );
-        
-        mesh.actionManager.registerAction(
-            new BABYLON.SetValueAction(
-                BABYLON.ActionManager.OnLongPressTrigger,
-                tempItem,
-                'flag',
-                false
-            )
-        ); 
-
-    });
-
-    return item
-}    
-    
-function actionManager(scene){
-    scene.actionManager = new BABYLON.ActionManager(scene);
-
-    scene.actionManager.registerAction(
-        new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyDownTrigger,
-            //parameters: 'w'      
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = true; }
-        )
-    );
-
-    scene.actionManager.registerAction(
-        new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyUpTrigger
-            
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = false; }
-        )
-    );   
-
-
-    return scene.actionManager;
-}
-
-function addRotation(target, scene){
-
- /*    */
-} 
-
-function backgroundMusic(scene){
-    let music = new BABYLON.Sound("music", "./assets/audio/arcade-kid.mp3", scene, null, {
-        loop: true,
-        autoplay: true
-    });
-    return music;
-}
-
-function createGround(scene){
-    const ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 10, width: 10, subdivisions: 4});
-    return ground;
-}
-
-function createLight(scene) {
-    const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
-    light.intensity = 0.7;
-    return light;
-}
-
-function createArcRotateCamera(scene) {
-    let camAlpha = -Math.PI / 2;
-    let camBeta = Math.PI / 2.5;
-    let camDist = 15;
-    let camTarget = new BABYLON.Vector3(0, 0, 0);
-    let camera = new BABYLON.ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
-    //camera.attachControl(true);
-    return camera;
-}
-
-export default function createStartScene(engine) {
-    let that = {};
-    let scene = (that.scene = new BABYLON.Scene(engine));
-    //scene.debugLayer.show();
-
-    let light = (that.light = createLight(scene));
-    let camera = (that.camera = createArcRotateCamera(scene));
-    let ground = (that.ground = createGround(scene));
-    
-    let manager = (that.actionManager = actionManager(scene));
-    let mesh1 = (that.mesh1 = importMesh(scene, 0, 0));
-    addRotation(mesh1, scene);
-
-    let bgMusic = (that.bgMusic = backgroundMusic(scene));
-    
-    
-    return that;
-}
-```
 
