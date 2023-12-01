@@ -451,7 +451,7 @@ Now the file should run and show a static scene which illustrates a range of sha
     width="100%" 
     scrolling="no" 
     title="shapes" 
-    src="Block_3/section_4/dist/index.html" 
+    src="Block_3/section_4/distribution/index.html" 
     frameborder="no" 
     loading="lazy" 
     allowtransparency="true" 

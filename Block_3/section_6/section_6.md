@@ -8,7 +8,7 @@ Audio will be added which can be switched on and off by keypress.
 
 The next step of development will be to cause a mesh to spin i response to a mouse click, and to stop again when the mouse hold is prolonged.
 
-Then the baked in animations of th model will be accessed to simulate walking with motion.
+Then the baked in animations of the model will be accessed to simulate walking with motion.
 
 ## Structure
 
@@ -263,10 +263,11 @@ I did not define a sky box so I am going to use a different method to add a defa
 import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader";
 import "@babylonjs/core/Helpers/sceneHelpers";
 ```
-The createRunScene function will be called from the index.ts file.  This will call a keyActionManeager which will keep track of keypresses.
+The createRunScene function will be called from the index.ts file.  This creates an action manager which is associated with the scene.  This then calls a function imported from an external module called keyActionManeager which will keep track of keypresses.  The external module can read the scene so the newly created scene.actionmanager will be available to it.
 
 ```javascript
 export default function createRunScene(runScene: SceneData) {
+  runScene.scene.actionManager = new ActionManager(runScene.scene);
   keyActionManager(runScene.scene);
 ```
 
@@ -370,11 +371,9 @@ export function getKeyDown():number {return keyDown};
 
 export function keyActionManager(scene: Scene) {
 ```
-The actionManager is created by using the ActionManager constructor.
+The scene actionManager has already been created in createRunScene,ts.  That means it is available to be read by any number of javascript modules.
+is created by using the ActionManager constructor.
 
-```javascript    
-  scene.actionManager = new ActionManager(scene);
-```
 The actionmanager can then register Actions.  This first registers code action which will be triggered whilever a key is depressed.
 
 ```javascript
