@@ -4,18 +4,20 @@ This is an adaptation of the tutorial [Using Vite with Babylon.js](https://doc.b
 
 ## Setting up the environment
 
-Before starting you will need docker desktop installed and running.  The Help|about tab shows version details.
+Before starting you will need docker desktop installed and running.  Current version is 4.31.1  
+
+The Help|about tab in Visual Studio Code shows version details.
 
 ```
-Version: 1.80.1 (user setup)
-Commit: 74f6148eb9ea00507ec113ec51c489d6ffb4b771
-Date: 2023-07-12T17:22:07.651Z
-Electron: 22.3.14
-ElectronBuildId: 21893604
-Chromium: 108.0.5359.215
-Node.js: 16.17.1
-V8: 10.8.168.25-electron.0
-OS: Windows_NT x64 10.0.22621
+Version: 1.90.1 (user setup)
+Commit: 611f9bfce64f25108829dd295f54a6894e87339d
+Date: 2024-06-11T21:01:24.262Z
+Electron: 29.4.0
+ElectronBuildId: 9593362
+Chromium: 122.0.6261.156
+Node.js: 20.9.0
+V8: 12.2.281.27-electron.0
+OS: Windows_NT x64 10.0.22631
 ```
 
 Then you will need VScode with the devContainers extension installed.
@@ -46,6 +48,9 @@ Click on Open Foldwer in Container. This will then open a browser dialog to choo
 
 ![choose folder](chooseFolder.png)
 
+Check that the devcontainer file will be saved in the workspace.  That makes the container easier to transfer to another machine.
+
+![lotcate devcontainer file](devcontainerLocation.png)
 
 On the first time of opening a prompt appears asking what type of container is needed  I chose 'Node & Typescript'
 
@@ -53,14 +58,14 @@ On the first time of opening a prompt appears asking what type of container is n
 
 Then you are asked to choose a node version, I have accepted the default version 20-bullseye.
 
-![node 20](bullseye.png)
+![node 22](bookworm.png)
 
 
 Then you are asked what additional features you need from a large checklist.  I selected none and pressed ok.
 
 ![additional features](addFeatures.png)
 
-The system then takes time to create the container image.  
+If you are asked to trust a file then do so. The system then takes time to create the container image.  
 
 ![reading container](readingConfig.png)
 
@@ -78,13 +83,13 @@ This shows the dev.md file which will be available as a place  tpo keep working 
 
 The .devContainer folder contains devcontainer.json which shows that the nature of the container is based on node and typescript.
 
-``` json
+```json
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
 	"name": "Node.js & TypeScript",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye"
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -113,7 +118,7 @@ The node version can be checked by
 >node -v
 
 ```code
-v20.8.0
+v22.2.0
 ```
 
 The typescript version is checked by:
@@ -121,7 +126,7 @@ The typescript version is checked by:
 >tsc -v
 
 ```code
-Version 5.2.2
+Version 5.4.5
 ```
 
 Install vite with
@@ -131,25 +136,25 @@ Install vite with
 This led to a comment inviting an update to npm.
 
 ```
+added 10 packages in 1m
+
 3 packages are looking for funding
   run `npm fund` for details
-
-found 0 vulnerabilities
-npm notice 
-npm notice New major version of npm available! 9.8.1 -> 10.2.1
-npm notice Changelog: https://github.com/npm/cli/releases/tag/v10.2.1
-npm notice Run npm install -g npm@10.2.1 to update!
-npm notice 
+npm notice
+npm notice New minor version of npm available! 10.7.0 -> 10.8.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v10.8.1
+npm notice To update run: npm install -g npm@10.8.1
+npm notice
 ```
 
 Folllow any advice to update.
 
-> npm install -g npm@10.2.1
+> npm install -g npm@10.8.1
 
 ```
-added 1 package in 4s
+added 1 package in 6s
 
-29 packages are looking for funding
+24 packages are looking for funding
   run `npm fund` for details
 ```
 
@@ -158,7 +163,7 @@ Once the loading process has completed a package.json file is crated in the baby
 ```json
 {
   "dependencies": {
-    "vite": "^4.4.4"
+    "vite": "^5.3.1"
   }
 }
 ```
@@ -168,19 +173,19 @@ Now install babylon core.
 >npm i -D @babylonjs/core
 
 ```
-added 1 package, and audited 10 packages in 22s
+added 2 packages, and audited 13 packages in 17s
 
 3 packages are looking for funding
   run `npm fund` for details
 
-found 0 vulnerabilities
+  found 0 vulnerabilities
 ```
 and also the inspector to make debugging easier.
 
 >npm i -D @babylonjs/inspector
 
 ```
-added 16 packages, and audited 26 packages in 39s
+added 15 packages, and audited 28 packages in 31s
 
 3 packages are looking for funding
   run `npm fund` for details
@@ -193,7 +198,7 @@ Also add the babylon loaders required to handle meshes.
 >npm i -D @babylonjs/loaders
 
 ```
-up to date, audited 26 packages in 3s
+up to date, audited 28 packages in 706ms
 
 3 packages are looking for funding
   run `npm fund` for details
@@ -205,18 +210,27 @@ Finally add the Havok physics engine which is newly introduced to Babylon Versio
 
 >npm i -D @babylonjs/havok
 
+```
+added 2 packages, and audited 30 packages in 3s
+
+3 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+```
+
 When these are completed the package.json file will have been modified to show the babylon elements as devDependencies because of the -D flag used on installation.
 
 ```JSON
 {
   "dependencies": {
-    "vite": "^4.4.4"
+    "vite": "^5.3.1"
   },
   "devDependencies": {
-    "@babylonjs/core": "^6.12.5",
-    "@babylonjs/havok": "^1.2.1",
-    "@babylonjs/inspector": "^6.12.5",
-    "@babylonjs/loaders": "^6.12.5"
+    "@babylonjs/core": "^7.11.2",
+    "@babylonjs/havok": "^1.3.5",
+    "@babylonjs/inspector": "^7.11.2",
+    "@babylonjs/loaders": "^7.11.2"
   }
 }
 ```
@@ -231,8 +245,8 @@ This asks for permission to add packages:
 
 ```
 Need to install the following packages:
-  create-vite@4.4.0
-Ok to proceed? (y) 
+create-vite@5.2.3
+Ok to proceed? (y)
 ```
 
 > Enter y
@@ -281,6 +295,19 @@ Done. Now run:
   npm install
   npm run dev
 ```
+> cd testProj
+
+> npm install
+
+```
+added 11 packages, and audited 12 packages in 1m
+
+3 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+```
+
 
 This creates a new folder with the name testProj and a starting structure:
 
@@ -301,19 +328,37 @@ Within the testProj folder is a new package.json file which includes the names o
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^5.0.2",
-    "vite": "^4.4.0"
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
   }
 }
 ```
-To test this out the dependancies must be installed by the node package manager.
 
->cd testProj
+Due to changes in the default security settings it is now necessary to add --host to the dev script manually thus:
+```json
+{
+  "name": "testproj",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
+  }
+}
+```
+
+To test this out the dependancies must be installed by the node package manager.
 
 >npm install
 
 ```code
-added 9 packages, and audited 10 packages in 10s
+added 1 package, and audited 13 packages in 3s
 
 3 packages are looking for funding
   run `npm fund` for details
@@ -324,11 +369,11 @@ found 0 vulnerabilities
 >npm run dev
 
 ```code
-  VITE v4.4.4  ready in 306 ms
+   VITE v5.3.1  ready in 774 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
-  ➜  press h to show help
+  ➜  press h + enter to show help
   ```
 
   Look to the browser 
