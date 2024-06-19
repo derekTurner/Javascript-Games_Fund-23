@@ -231,7 +231,7 @@ If you encounter EOI error -5 at any point this means that the container is no l
 
 Don't change the contents from the file explorer while a container is running.
 
-It is easy to come back to local editing by CTL shift P and choosing Dev Containers: reopen file locally.
+It is easy to come back to local editing by CTL shift P and choosing Dev Containers: reopen file locally. (This can sometinmes clear some typescript errors which have been fixed but still appearn highlighted red.)
 
 If you see these errors.  Close and destroy the container and restart the PC.
 
@@ -268,6 +268,7 @@ Typescript demands stricter syntax than javaScript, that is one way in which it 
 
 You must ensure that all the elements added to the variable that are included in the interface.  If you decide to add a new shape that must be in the interface as well.  However the use of ? means optional so if you decide to remove the box the interface will not complain that it is missing.
 
+**babylonProj/src/createStartscene.ts**
 ```javascript
  export default function createStartScene(engine: Engine) {
     interface SceneData {
@@ -317,16 +318,17 @@ Issue the build command.
 > testproj@0.0.0 build
 > tsc && vite build
 
-✓ 1179 modules transformed.
-dist/index.html                     0.30 kB │ gzip:   0.22 kB
-dist/assets/index-d6d7b775.css      0.10 kB │ gzip:   0.10 kB
-dist/assets/index-3c6ef202.js   3,610.89 kB │ gzip: 836.26 kB
+vite v5.3.1 building for production...
+✓ 1696 modules transformed.
+dist/index.html                      0.31 kB │ gzip:     0.22 kB
+dist/assets/index-f6TmYXaZ.css       0.10 kB │ gzip:     0.10 kB
+dist/assets/index-8neby6lM.js   10,179.60 kB │ gzip: 2,473.87 kB
 
-(!) Some chunks are larger than 500 kBs after minification. Consider:
+(!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 41.88s
+✓ built in 53.98s
 ```
 
 There are some configuration files which could be optimised but the build has worked and can be seen in the dist folder.  Before you can uise this you will need to refresh VScodes view of the folder structure.
@@ -337,7 +339,7 @@ The files in the dist folder:
 
 ![dist](dist.png)
 
-can be run by 
+an be run by 
 
 >npm run preview
 
@@ -349,7 +351,9 @@ The files in the dist folder can now we copied and placed on a web server or int
 
 You don't really need a separate testing server as you have one as live server within VScode.
 
-So opening a separate window.
+In vscode us ctrl shift P to reopen the folder locally.  The container is now closed.
+
+So opening just the dist folder in a separate window.
 
 ![testing server](testingServer.png)
 

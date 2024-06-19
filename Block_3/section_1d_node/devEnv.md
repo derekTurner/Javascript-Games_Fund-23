@@ -334,7 +334,7 @@ Within the testProj folder is a new package.json file which includes the names o
 }
 ```
 
-Due to changes in the default security settings it is now necessary to add --host to the dev script manually thus:
+Due to changes in the default security settings it is now necessary to add --host to the dev and preview scripts manually thus:
 ```json
 {
   "name": "testproj",
@@ -344,7 +344,7 @@ Due to changes in the default security settings it is now necessary to add --hos
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --host"
   },
   "devDependencies": {
     "typescript": "^5.2.2",
