@@ -60,7 +60,7 @@ For the [point light](https://doc.babylonjs.com/typedoc/classes/BABYLON.PointLig
 }
 ```
 
-The [directional light](https://doc.babylonjs.com/typedoc/classes/BABYLON.DirectionalLight) casts in the direction of the vector3 and its position is manipulated by light.position. A directional olight is capable of casting a shadow.
+The [directional light](https://doc.babylonjs.com/typedoc/classes/BABYLON.DirectionalLight) casts in the direction of the vector3 and its position is manipulated by light.position. A directional light is capable of casting a shadow.
 
 ```javascript
 function createSpotLight(scene: Scene ){
@@ -256,7 +256,7 @@ And finally it is running here!
     width="600" 
     scrolling="no" 
     title="Lighting and Shadow" 
-    src="Block_3/section_2a/dist/index.html" 
+    src="Block_3/section_2a/dist_2a/index.html" 
     style="border:10;border-style: solid;
     border-color: red;" 
     loading="lazy" 

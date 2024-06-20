@@ -418,8 +418,8 @@ See that the code now is running on the browser port 5501.
 And finally it is running here!
 
 <iframe 
-    height="480" 
-    width="600" 
+    height="600" 
+    width="100%" 
     scrolling="no" 
     title="BabylonJS developed on codeSandbox" 
     src="Block_3/section_1h/dist_1h/index.html" 

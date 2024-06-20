@@ -437,7 +437,7 @@ export default function createRunScene(runScene: SceneData) {
 Then with all of this in place the scene will appear as:
 
 <iframe 
-    height="460" 
+    height="600" 
     width="100%" 
     scrolling="no" 
     title="shapes" 

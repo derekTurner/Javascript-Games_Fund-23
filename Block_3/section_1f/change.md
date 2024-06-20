@@ -35,7 +35,7 @@ Open a new terminal from the menu or
 
 > CTRL + Shift + '
 
-```
+```bash
 node ➜ /workspaces/babylonJSdev (main) $ 
 ```
 
@@ -43,7 +43,7 @@ Install node modules based on package.json inside the babylonJSdev folder:
 
 > npm install
 
-```
+```bash
 added 25 packages, and audited 26 packages in 27s
 
 3 packages are looking for funding
@@ -61,7 +61,7 @@ Follow any update advice:
 
 >npm install -g npm@9.8.1
 
-```
+```bash
 added 1 package in 2s
 
 28 packages are looking for funding
@@ -74,14 +74,14 @@ Two bash shells are now running
 
 ![shells](shells.jpg)
 
-```
+```bash
 node ➜ /workspaces/babylonJSdev/babylonProj (main) $ 
 ```
 Install modules based on package.json in the babylonProj folder.
 
 > npm install
 
-```
+```bash
 added 9 packages, and audited 10 packages in 2s
 
 3 packages are looking for funding
@@ -94,7 +94,7 @@ Now check the programme running on the development server.
 
 > npm run dev
 
-```
+```bash
   VITE v4.4.4  ready in 531 ms
 
   ➜  Local:   http://localhost:5173/
@@ -112,7 +112,7 @@ Try a distribution build.
 
 > npm run build
 
-```
+```bash
 > testproj@0.0.0 build
 > tsc && vite build
 
@@ -159,7 +159,7 @@ This would be fine if you opened the dist folder in vsc to make it the root, or 
 ![dist on live server](dist5500.jpg)
 
 The code now works fine.
-
+<div class="resizable">
 <iframe 
     height="600" 
     width="100%" 
@@ -172,3 +172,4 @@ The code now works fine.
     allowtransparency="true" 
     allowfullscreen="true">
 </iframe>
+</div>

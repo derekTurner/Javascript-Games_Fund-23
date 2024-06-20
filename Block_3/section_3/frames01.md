@@ -417,7 +417,7 @@ Note that the position of the sphere is also altered, this is simply to clear a 
 The resulting animation in the x direction is shown here.
 
 <iframe 
-    height="460" 
+    height="600" 
     width="100%" 
     scrolling="no" 
     title="frame animaations" 
@@ -470,7 +470,7 @@ export default function createRunScene(runScene: SceneData) {
 The y animation is shown here.
 
 <iframe 
-    height="460" 
+    height="600" 
     width="100%" 
     scrolling="no" 
     title="frame animaations" 
@@ -545,7 +545,7 @@ export default function createRunScene(runScene: SceneData) {
 The combined motion and rotation can be seen here.
 
 <iframe 
-    height="460" 
+    height="600" 
     width="100%" 
     scrolling="no" 
     title="frame animaations" 
@@ -598,7 +598,7 @@ export default function createRunScene(runScene: SceneData) {
 The animated scaling is shown here.
 
 <iframe 
-    height="460" 
+    height="600" 
     width="100%" 
     scrolling="no" 
     title="frame animaations" 
@@ -653,7 +653,7 @@ export function createColorShift(frameRate: number) {
 This can be added to createRunScene.ts.
 
 <iframe 
-    height="460" 
+    height="600" 
     width="100%" 
     scrolling="no" 
     title="frame animaations" 
@@ -837,7 +837,7 @@ export default function createRunScene(runScene: SceneData) {
 The result of the combined animations is shown here:
 
 <iframe 
-    height="460" 
+    height="600" 
     width="100%" 
     scrolling="no" 
     title="frame animaations" 

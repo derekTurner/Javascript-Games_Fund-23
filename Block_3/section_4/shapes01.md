@@ -447,7 +447,7 @@ export default function createRunScene(runScene: SceneData) {
 Now the file should run and show a static scene which illustrates a range of shapes.  
 
 <iframe 
-    height="460" 
+    height="600" 
     width="100%" 
     scrolling="no" 
     title="shapes" 

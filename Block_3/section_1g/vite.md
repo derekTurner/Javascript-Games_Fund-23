@@ -206,7 +206,7 @@ Build lighting01:
 
 > npm run lighting01build
 
-```
+```bash
 > testproj@0.0.0 lighting01build
 > tsc && vite build lighting01
 
@@ -226,7 +226,7 @@ To preview this build:
 
 > npm run lighting01preview
 
-```
+```bash
 > testproj@0.0.0 lighting01preview
 > vite preview lighting01
 
@@ -246,7 +246,7 @@ The files are now in the dist folder
 These can be copied using file explorer and deployed on any html server.
 
 <iframe 
-    height="480" 
+    height="600" 
     width="100%" 
     scrolling="no" 
     title="Coloured Hemispheric Light" 
