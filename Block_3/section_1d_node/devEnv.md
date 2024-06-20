@@ -109,7 +109,7 @@ The .devContainer folder contains devcontainer.json which shows that the nature 
 ```
 Open a terminal from the VSC menu.  The prompt should appear as
 
-```code
+```bash
 node ➜ /workspaces/babylonJSdev (main) $ 
 ```
 
@@ -117,7 +117,7 @@ The node version can be checked by
 
 >node -v
 
-```code
+```bash
 v22.2.0
 ```
 
@@ -125,7 +125,7 @@ The typescript version is checked by:
 
 >tsc -v
 
-```code
+```bash
 Version 5.4.5
 ```
 
@@ -135,7 +135,7 @@ Install vite with
 
 This led to a comment inviting an update to npm.
 
-```
+```bash
 added 10 packages in 1m
 
 3 packages are looking for funding
@@ -151,7 +151,7 @@ Folllow any advice to update.
 
 > npm install -g npm@10.8.1
 
-```
+```bash
 added 1 package in 6s
 
 24 packages are looking for funding
@@ -172,7 +172,7 @@ Now install babylon core.
 
 >npm i -D @babylonjs/core
 
-```
+```bash
 added 2 packages, and audited 13 packages in 17s
 
 3 packages are looking for funding
@@ -184,7 +184,7 @@ and also the inspector to make debugging easier.
 
 >npm i -D @babylonjs/inspector
 
-```
+```bash
 added 15 packages, and audited 28 packages in 31s
 
 3 packages are looking for funding
@@ -197,7 +197,7 @@ Also add the babylon loaders required to handle meshes.
 
 >npm i -D @babylonjs/loaders
 
-```
+```bash
 up to date, audited 28 packages in 706ms
 
 3 packages are looking for funding
@@ -210,7 +210,7 @@ Finally add the Havok physics engine which is newly introduced to Babylon Versio
 
 >npm i -D @babylonjs/havok
 
-```
+```bash
 added 2 packages, and audited 30 packages in 3s
 
 3 packages are looking for funding
@@ -243,7 +243,7 @@ To initialise a typescript project based on the vanilla-ts framework vite with a
 
 This asks for permission to add packages:
 
-```
+```bash
 Need to install the following packages:
 create-vite@5.2.3
 Ok to proceed? (y)
@@ -251,19 +251,19 @@ Ok to proceed? (y)
 
 > Enter y
 
-```
+```bash
 ? Project name: › vite-project
 ```
 
 > change to testProj
 
-```
+```bash
 ? Package name: › testproj
 ```
 
 > Accept testproj
 
-```
+```bash
 ? Select a framework: › - Use arrow-keys. Return to submit.
 ❯   Vanilla
     Vue
@@ -278,7 +278,7 @@ Ok to proceed? (y)
 
 > Select vanilla
 
-```
+```bash
 ? Select a variant: › - Use arrow-keys. Return to submit.
 ❯   TypeScript
     JavaScript
@@ -286,7 +286,7 @@ Ok to proceed? (y)
 
 >Select  typescript
 
-```
+```bash
 Scaffolding project in /workspaces/babylonJSdev/testProj...
 
 Done. Now run:
@@ -299,7 +299,7 @@ Done. Now run:
 
 > npm install
 
-```
+```bash
 added 11 packages, and audited 12 packages in 1m
 
 3 packages are looking for funding
@@ -357,7 +357,7 @@ To test this out the dependancies must be installed by the node package manager.
 
 >npm install
 
-```code
+```bash
 added 1 package, and audited 13 packages in 3s
 
 3 packages are looking for funding
@@ -368,7 +368,7 @@ found 0 vulnerabilities
 
 >npm run dev
 
-```code
+```bash
    VITE v5.3.1  ready in 774 ms
 
   ➜  Local:   http://localhost:5173/

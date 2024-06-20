@@ -205,7 +205,7 @@ There are now two terminals running and it is easy to move between root and proj
 
 Check that the terminal prompt is now in the correct folder
 
-```code
+```bash
 node ➜ /workspaces/babylonJSdev/babylonProj (main) $
 ```
 
@@ -314,7 +314,7 @@ Issue the build command.
 
 >npm run build
 
-```code
+```bash
 > testproj@0.0.0 build
 > tsc && vite build
 
